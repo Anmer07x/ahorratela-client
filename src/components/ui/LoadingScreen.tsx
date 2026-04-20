@@ -1,4 +1,4 @@
-import { Target, Lightbulb } from 'lucide-react'
+import { Lightbulb } from 'lucide-react'
 import { getRandomTip } from '../../utils/tips'
 import { useState, useEffect } from 'react'
 

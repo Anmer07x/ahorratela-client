@@ -57,8 +57,6 @@ export default function Dashboard() {
   }, [])
 
   const activeGoals = goals.filter(g => g.status === 'active')
-
-  // Build chart data from last 7 transactions
   const chartData = [...transactions]
     .slice(0, 14)
     .reverse()

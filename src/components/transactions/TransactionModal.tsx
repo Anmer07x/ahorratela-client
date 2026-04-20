@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { X, ArrowLeftRight, CalendarClock, CheckCircle2, PlusCircle } from 'lucide-react'
 import { useTransactionsStore, type Transaction } from '../../store/transactionsStore'
 import { useGoalsStore } from '../../store/goalsStore'
-import api from '../../lib/api'
 
 interface TransactionModalProps {
   isOpen: boolean
@@ -11,7 +10,7 @@ interface TransactionModalProps {
 
 export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
   const { createTransaction } = useTransactionsStore()
-  const { goals, fetchGoals, fetchGoals: refreshGoals } = useGoalsStore()
+  const { goals, fetchGoals } = useGoalsStore()
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [splitIncome, setSplitIncome] = useState(false)
@@ -89,7 +88,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
       }
 
       // Refresh goals so current_amount updates immediately in the UI
-      await refreshGoals()
+      await fetchGoals()
 
       setShowSuccess(true)
     } catch (err) {

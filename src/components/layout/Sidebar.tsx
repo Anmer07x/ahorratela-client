@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Target, ArrowLeftRight, BarChart2,
-  Settings, TrendingUp, LogOut, ChevronRight, Wallet, User, ExternalLink, Power
+  Settings, LogOut, ChevronRight, User, ExternalLink, Power
 } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
 import api from '../../lib/api'

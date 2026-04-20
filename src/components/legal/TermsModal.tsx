@@ -1,4 +1,3 @@
-import React from 'react'
 import { X, ShieldCheck, Lock, EyeOff, ScrollText } from 'lucide-react'
 
 interface TermsModalProps {
