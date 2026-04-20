@@ -58,33 +58,33 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
     onClose()
   }
 
+  const rawAmount = Number(formData.amount.replace(/\D/g, '') || 0)
+  const splitSavingAmount = Math.round((rawAmount * splitPercent) / 100)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
       const payload: any = {
         type: formData.type,
-        amount: Number(formData.amount.replace(/\D/g, '')),
+        amount: rawAmount,
         description: formData.description,
-        transaction_date: formData.transactionDate,
+        transactionDate: formData.transactionDate,
         isProjected: isProjected
       }
       
-      if (formData.type === 'saving') payload.goal_id = formData.goalId
+      if (formData.type === 'saving') payload.goalId = formData.goalId
       if (formData.type === 'income') payload.source = formData.source
 
       await createTransaction(payload)
 
       if (formData.type === 'income' && splitIncome && splitGoalId) {
-        const total = Number(formData.amount.replace(/\D/g, ''))
-        const savingAmount = (total * splitPercent) / 100
-        
         await createTransaction({
           type: 'saving',
-          amount: savingAmount,
+          amount: splitSavingAmount,
           description: `Ahorro automático (${splitPercent}%) de: ${formData.description}`,
-          goal_id: splitGoalId,
-          transaction_date: formData.transactionDate
+          goalId: splitGoalId,
+          transactionDate: formData.transactionDate
         })
       }
 
@@ -294,8 +294,13 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                           <div className="bg-white/5 p-3 rounded-xl">
                             <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Cálculo estimado</p>
                             <p className="text-xs text-slate-300">
-                              Ahorro: <strong className="text-brand-300">${((Number(formData.amount.replace(/\D/g, '') || 0) * splitPercent) / 100).toLocaleString('es-CO')}</strong>
+                              Ahorro: <strong className="text-brand-300">${splitSavingAmount.toLocaleString('es-CO')}</strong>
                             </p>
+                            {rawAmount > 0 && (
+                              <p className="text-xs text-slate-500 mt-0.5">
+                                Resto: ${(rawAmount - splitSavingAmount).toLocaleString('es-CO')}
+                              </p>
+                            )}
                           </div>
                         </div>
                         <div className="space-y-2">
