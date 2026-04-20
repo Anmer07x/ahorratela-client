@@ -11,7 +11,7 @@ interface TransactionModalProps {
 
 export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
   const { createTransaction } = useTransactionsStore()
-  const { goals, fetchGoals } = useGoalsStore()
+  const { goals, fetchGoals, fetchGoals: refreshGoals } = useGoalsStore()
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [splitIncome, setSplitIncome] = useState(false)
@@ -73,7 +73,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
         isProjected: isProjected
       }
       
-      if (formData.type === 'saving') payload.goalId = formData.goalId
+      if (formData.type === 'saving' && formData.goalId) payload.goalId = formData.goalId
       if (formData.type === 'income') payload.source = formData.source
 
       await createTransaction(payload)
@@ -87,6 +87,9 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
           transactionDate: formData.transactionDate
         })
       }
+
+      // Refresh goals so current_amount updates immediately in the UI
+      await refreshGoals()
 
       setShowSuccess(true)
     } catch (err) {
