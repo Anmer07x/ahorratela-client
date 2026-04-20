@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Target, Plus, Search, Edit2, Trash2 } from 'lucide-react'
+import { Target, Plus, Search, Edit2, Trash2, Lightbulb, TrendingUp, Clock } from 'lucide-react'
 import { useGoalsStore, type Goal } from '../store/goalsStore'
 import { formatCurrency } from '../utils/format'
 import GoalModal from '../components/goals/GoalModal'
 import ConfirmModal from '../components/ui/ConfirmModal'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, differenceInCalendarDays } from 'date-fns'
 import { es } from 'date-fns/locale'
 
 export default function Goals() {
@@ -149,8 +149,24 @@ export default function Goals() {
   )
 }
 
+// ─── Savings advice calculator ────────────────────────────────────────────────
+function getSavingsAdvice(goal: Goal): { weekly: number; monthly: number; daysLeft: number } | null {
+  if (!goal.deadline) return null
+  const remaining = Number(goal.remaining_amount)
+  if (remaining <= 0) return null
+
+  const daysLeft = differenceInCalendarDays(parseISO(goal.deadline), new Date())
+  if (daysLeft <= 0) return null
+
+  const weekly = remaining / (daysLeft / 7)
+  const monthly = remaining / (daysLeft / 30)
+  return { weekly, monthly, daysLeft }
+}
+
 function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, onDelete: () => void }) {
   const pct = Math.min(100, Number(goal.progress_percentage) || 0)
+  const advice = getSavingsAdvice(goal)
+
   return (
     <div className="card p-5 space-y-4">
       <div className="flex justify-between items-start">
@@ -161,7 +177,8 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
           <div>
             <h4 className="font-semibold text-slate-100">{goal.name}</h4>
             {goal.deadline && (
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-400 flex items-center gap-1">
+                <Clock className="w-3 h-3" />
                 Hasta: {format(parseISO(goal.deadline), 'd MMM yyyy', { locale: es })}
               </p>
             )}
@@ -198,6 +215,47 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
           {pct < 100 && <span>Falta {formatCurrency(goal.remaining_amount)}</span>}
         </div>
       </div>
+
+      {/* ─ Savings advice panel ─ */}
+      {goal.status === 'active' && pct < 100 && (
+        <div className={`rounded-xl p-3 border text-xs space-y-2 ${
+          advice
+            ? 'bg-brand-500/5 border-brand-500/15'
+            : 'bg-white/[0.03] border-white/5'
+        }`}>
+          <p className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px] text-brand-400/80">
+            <Lightbulb className="w-3.5 h-3.5" />
+            Consejo para cumplir tu meta
+          </p>
+
+          {advice ? (
+            <div className="space-y-1.5">
+              <p className="text-slate-400">
+                Te quedan <strong className="text-slate-200">{advice.daysLeft} días</strong>. Para llegar a tiempo necesitas ahorrar:
+              </p>
+              <div className="grid grid-cols-2 gap-2 mt-1">
+                <div className="bg-surface-900/60 rounded-lg p-2 text-center">
+                  <p className="text-[10px] text-slate-500 uppercase font-bold">Por semana</p>
+                  <p className="font-black text-brand-400 text-sm mt-0.5">{formatCurrency(Math.ceil(advice.weekly))}</p>
+                </div>
+                <div className="bg-surface-900/60 rounded-lg p-2 text-center">
+                  <p className="text-[10px] text-slate-500 uppercase font-bold">Por mes</p>
+                  <p className="font-black text-blue-400 text-sm mt-0.5">{formatCurrency(Math.ceil(advice.monthly))}</p>
+                </div>
+              </div>
+            </div>
+          ) : goal.deadline ? (
+            <p className="text-yellow-500/80 flex items-center gap-1">
+              ⚠️ La fecha límite ya pasó. Considera actualizar tu meta.
+            </p>
+          ) : (
+            <p className="text-slate-500 flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-slate-600" />
+              Agrega una fecha límite para ver cuánto debes ahorrar
+            </p>
+          )}
+        </div>
+      )}
     </div>
   )
 }

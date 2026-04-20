@@ -12,7 +12,10 @@ const items = [
 
 export default function MobileNav() {
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 bg-surface-800/90 backdrop-blur-lg border-t border-white/5 z-40">
+    <nav
+      className="md:hidden fixed bottom-0 inset-x-0 bg-surface-800/90 backdrop-blur-lg border-t border-white/5 z-40"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
       <div className="flex">
         {items.map(({ to, icon: Icon, label }) => (
           <NavLink

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { BarChart2 } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { BarChart2, RefreshCw } from 'lucide-react'
 import api from '../lib/api'
 import { formatCurrency } from '../utils/format'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
@@ -19,24 +19,34 @@ export default function WeeklyReport() {
   const [currentWeek, setCurrentWeek] = useState<WeeklyData | null>(null)
   const [history, setHistory] = useState<WeeklyData[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const fetchData = useCallback(async (silent = false) => {
+    if (!silent) setIsLoading(true)
+    else setRefreshing(true)
+    try {
+      const [currentRes, historyRes] = await Promise.all([
+        api.get('/weekly/current'),
+        api.get('/weekly')
+      ])
+      setCurrentWeek(currentRes.data.data)
+      setHistory(historyRes.data.data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+      setRefreshing(false)
+    }
+  }, [])
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [currentRes, historyRes] = await Promise.all([
-          api.get('/weekly/current'),
-          api.get('/weekly')
-        ])
-        setCurrentWeek(currentRes.data.data)
-        setHistory(historyRes.data.data)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
     fetchData()
-  }, [])
+
+    // Refetch when the user comes back to this tab (e.g. after deleting a transaction)
+    const onFocus = () => fetchData(true)
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [fetchData])
 
   if (isLoading) {
     return <div className="text-center py-10 text-slate-400">Cargando control semanal...</div>
@@ -56,11 +66,22 @@ export default function WeeklyReport() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-          <BarChart2 className="text-brand-400" /> Control Semanal
-        </h2>
-        <p className="text-slate-400 text-sm mt-1">Evalúa tu progreso en la semana actual</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
+            <BarChart2 className="text-brand-400" /> Control Semanal
+          </h2>
+          <p className="text-slate-400 text-sm mt-1">Evalúa tu progreso en la semana actual</p>
+        </div>
+        <button
+          onClick={() => fetchData(true)}
+          disabled={refreshing}
+          className="btn-secondary flex items-center gap-2 text-sm"
+          title="Actualizar datos"
+        >
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+          {refreshing ? 'Actualizando...' : 'Actualizar'}
+        </button>
       </div>
 
       {c && (
