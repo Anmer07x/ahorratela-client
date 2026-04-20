@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   TrendingUp, TrendingDown, PiggyBank, Target,
-  ArrowRight, Plus, Wallet, Calendar, Zap, Lightbulb, User as UserIcon, CalendarClock
+  ArrowRight, Plus, Lightbulb, User as UserIcon, CalendarClock
 } from 'lucide-react'
 import { getRandomTip } from '../utils/tips'
 import { useAuthStore } from '../store/authStore'
@@ -57,7 +57,6 @@ export default function Dashboard() {
   }, [])
 
   const activeGoals = goals.filter(g => g.status === 'active')
-  const completedGoals = goals.filter(g => g.status === 'completed')
 
   // Build chart data from last 7 transactions
   const chartData = [...transactions]
@@ -74,36 +73,36 @@ export default function Dashboard() {
     {
       id: 'income-card',
       label: showProjected ? 'Ingresos (Supuesto)' : 'Ingresos del mes',
-      value: formatCurrency(showProjected ? summary?.projected_income : summary?.total_income),
-      realValue: showProjected ? formatCurrency(summary?.total_income) : null,
+      value: formatCurrency(showProjected ? summary?.projected_income ?? 0 : summary?.total_income ?? 0),
+      realValue: showProjected ? formatCurrency(summary?.total_income ?? 0) : null,
       icon: TrendingUp,
       color: 'text-brand-400',
       bg: 'bg-brand-500/10',
       border: 'border-brand-500/20',
-      isProjected: showProjected && (Number(summary?.projected_income) > Number(summary?.total_income)),
+      isProjected: showProjected && (Number(summary?.projected_income ?? 0) > Number(summary?.total_income ?? 0)),
       style: { color: '#8EDF3E' }
     },
     {
       id: 'expenses-card',
       label: showProjected ? 'Gastos (Supuesto)' : 'Gastos del mes',
-      value: formatCurrency(showProjected ? summary?.projected_expenses : summary?.total_expenses),
-      realValue: showProjected ? formatCurrency(summary?.total_expenses) : null,
+      value: formatCurrency(showProjected ? summary?.projected_expenses ?? 0 : summary?.total_expenses ?? 0),
+      realValue: showProjected ? formatCurrency(summary?.total_expenses ?? 0) : null,
       icon: TrendingDown,
       color: 'text-red-400',
       bg: 'bg-red-500/10',
       border: 'border-red-500/20',
-      isProjected: showProjected && (Number(summary?.projected_expenses) > Number(summary?.total_expenses)),
+      isProjected: showProjected && (Number(summary?.projected_expenses ?? 0) > Number(summary?.total_expenses ?? 0)),
     },
     {
       id: 'savings-card',
       label: showProjected ? 'Ahorro (Supuesto)' : 'Ahorro del mes',
-      value: formatCurrency(showProjected ? summary?.projected_savings : summary?.total_savings),
-      realValue: showProjected ? formatCurrency(summary?.total_savings) : null,
+      value: formatCurrency(showProjected ? summary?.projected_savings ?? 0 : summary?.total_savings ?? 0),
+      realValue: showProjected ? formatCurrency(summary?.total_savings ?? 0) : null,
       icon: PiggyBank,
       color: 'text-blue-400',
       bg: 'bg-blue-500/10',
       border: 'border-blue-500/20',
-      isProjected: showProjected && (Number(summary?.projected_savings) > Number(summary?.total_savings)),
+      isProjected: showProjected && (Number(summary?.projected_savings ?? 0) > Number(summary?.total_savings ?? 0)),
     },
     {
       id: 'goals-card',

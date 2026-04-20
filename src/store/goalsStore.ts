@@ -27,7 +27,7 @@ interface GoalsState {
   deleteGoal: (id: string) => Promise<void>
 }
 
-export const useGoalsStore = create<GoalsState>((set, get) => ({
+export const useGoalsStore = create<GoalsState>((set) => ({
   goals: [],
   isLoading: false,
   error: null,

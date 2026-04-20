@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { BarChart2, Calendar, TrendingDown, Target, Zap } from 'lucide-react'
+import { BarChart2 } from 'lucide-react'
 import api from '../lib/api'
 import { formatCurrency } from '../utils/format'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
 interface WeeklyData {
   id: string

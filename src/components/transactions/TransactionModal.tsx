@@ -12,7 +12,6 @@ interface TransactionModalProps {
 export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
   const { createTransaction } = useTransactionsStore()
   const { goals, fetchGoals } = useGoalsStore()
-  const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [splitIncome, setSplitIncome] = useState(false)
@@ -24,7 +23,6 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
     type: 'expense' as Transaction['type'],
     amount: '',
     description: '',
-    categoryId: '',
     goalId: '',
     source: '',
     transactionDate: new Date().toISOString().split('T')[0],
@@ -34,7 +32,6 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
   useEffect(() => {
     if (isOpen) {
       fetchGoals()
-      api.get('/categories').then(res => setCategories(res.data.data)).catch(console.error)
       setShowSuccess(false)
     }
   }, [isOpen])
@@ -44,7 +41,6 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
       type: 'expense',
       amount: '',
       description: '',
-      categoryId: '',
       goalId: '',
       source: '',
       transactionDate: new Date().toISOString().split('T')[0],
@@ -70,12 +66,11 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
         type: formData.type,
         amount: Number(formData.amount.replace(/\D/g, '')),
         description: formData.description,
-        transactionDate: formData.transactionDate,
+        transaction_date: formData.transactionDate,
         isProjected: isProjected
       }
       
-      if (formData.type === 'expense') payload.categoryId = formData.categoryId
-      if (formData.type === 'saving') payload.goalId = formData.goalId
+      if (formData.type === 'saving') payload.goal_id = formData.goalId
       if (formData.type === 'income') payload.source = formData.source
 
       await createTransaction(payload)
@@ -88,8 +83,8 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
           type: 'saving',
           amount: savingAmount,
           description: `Ahorro automático (${splitPercent}%) de: ${formData.description}`,
-          goalId: splitGoalId,
-          transactionDate: formData.transactionDate
+          goal_id: splitGoalId,
+          transaction_date: formData.transactionDate
         })
       }
 

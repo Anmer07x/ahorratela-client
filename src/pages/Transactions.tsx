@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ArrowLeftRight, Plus, Trash2, CalendarClock, CheckCircle2, Loader2 } from 'lucide-react'
+import { ArrowLeftRight, Plus, Trash2, CheckCircle2, Loader2 } from 'lucide-react'
 import { useTransactionsStore } from '../store/transactionsStore'
 import { formatCurrency } from '../utils/format'
 import { format, parseISO } from 'date-fns'

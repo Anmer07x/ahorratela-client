@@ -33,7 +33,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 }
 
 function App() {
-  const { isInitializing, isAuthenticated, setInitializing, setAuth, logout, isLoading } = useAuthStore()
+  const { isInitializing, setInitializing, setAuth, logout } = useAuthStore()
 
   useEffect(() => {
     const initAuth = async () => {

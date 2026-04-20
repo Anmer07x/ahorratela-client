@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { Eye, EyeOff, TrendingUp, Lock, Mail, User, ArrowRight, Loader2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Eye, EyeOff, Lock, Mail, User, ArrowRight, Loader2 } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import { GoogleLogin } from '@react-oauth/google'
 import api from '../lib/api'
