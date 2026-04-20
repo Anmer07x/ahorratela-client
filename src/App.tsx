@@ -38,29 +38,24 @@ function App() {
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = useAuthStore.getState().accessToken
-      if (!storedToken) {
-        setInitializing(false)
-        return
-      }
-
+      
       try {
-        const { data } = await api.get('/auth/me')
-        if (data.success) {
-          // Re-hydrate user data from server to ensure it's fresh
-          const user = data.data
-          const at = useAuthStore.getState().accessToken!
-          const rt = useAuthStore.getState().refreshToken!
-          setAuth(user, at, rt)
+        if (storedToken) {
+          const { data } = await api.get('/auth/me')
+          if (data.success) {
+            const user = data.data
+            const at = useAuthStore.getState().accessToken!
+            const rt = useAuthStore.getState().refreshToken!
+            setAuth(user, at, rt)
+          }
         }
       } catch (err) {
         console.error('Initial auth check failed:', err)
-        // If it's a 401/expired, the interceptor might have handled it, 
-        // but if we are here and still unauthorized, logout.
         if (!useAuthStore.getState().isAuthenticated) {
           logout()
         }
       } finally {
-        // Asegurar que la pantalla profesional sea visible al menos 2 segundos
+        // Asegurar que la pantalla profesional sea visible por el tiempo deseado
         setTimeout(() => setInitializing(false), 5000)
       }
     }
@@ -68,7 +63,7 @@ function App() {
     initAuth()
   }, [])
 
-  if (isInitializing && !useAuthStore.getState().accessToken) {
+  if (isInitializing) {
     return <LoadingScreen />
   }
 
