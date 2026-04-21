@@ -1,4 +1,8 @@
 {
+    "buildCommand": "vite build",
+    "env": {
+        "CI": "false"
+    },
     "rewrites": [
         {
             "source": "/(.*)",
