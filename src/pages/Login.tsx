@@ -260,31 +260,25 @@ export default function Login() {
             </div>
           </div>
 
-
-
-          {mode === 'register' && (
-            <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-3 flex items-start gap-3 mt-4 animate-fade-in">
-              <ShieldCheck className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
-              <div className="text-left">
-                <p className="text-xs font-semibold text-slate-200 mb-0.5">Seguridad y Privacidad Maxima</p>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Tus datos financieros están protegidos con <strong>cifrado de grado bancario (AES-256) end-to-end</strong>. Nadie, excepto tú, puede ver tu dinero y contraseñas.
-                </p>
-              </div>
+          <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-3 flex items-start gap-3 mt-4 animate-fade-in">
+            <ShieldCheck className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
+            <div className="text-left">
+              <p className="text-xs font-semibold text-slate-200 mb-0.5">🔐 Tu información está protegida</p>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Toda tu información viaja y se almacena de forma <strong>cifrada de extremo a extremo</strong>. Nadie, ni nosotros, puede ver tus datos.
+              </p>
             </div>
-          )}
+          </div>
 
-          {mode === 'register' && (
-            <p className="text-xs text-slate-500 text-center mt-4">
-              Al registrarte aceptas nuestros{' '}
-              <span 
-                onClick={() => setShowTerms(true)}
-                className="text-brand-400 cursor-pointer hover:underline font-medium"
-              >
-                términos y condiciones de seguridad
-              </span>
-            </p>
-          )}
+          <p className="text-xs text-slate-500 text-center mt-4">
+            Al continuar aceptas nuestros{' '}
+            <span 
+              onClick={() => setShowTerms(true)}
+              className="text-brand-400 cursor-pointer hover:underline font-medium"
+            >
+              términos y condiciones de seguridad
+            </span>
+          </p>
 
           <TermsModal 
             isOpen={showTerms}

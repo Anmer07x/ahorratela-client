@@ -41,8 +41,8 @@ export default function TermsModal({ isOpen, onClose }: TermsModalProps) {
             <div className="text-sm">
               <h3 className="font-semibold text-brand-400 mb-1">Tu privacidad es nuestra prioridad</h3>
               <p className="text-slate-300 leading-relaxed">
-                Tus datos financieros viajan y se almacenan bajo cifrado de grado bancario (AES-256). 
-                Ni siquiera nosotros como desarrolladores podemos ver tus montos de dinero directamente en la base de datos.
+                Toda tu información financiera viaja y se almacena bajo un estricto cifrado de extremo a extremo. 
+                Ni siquiera nosotros como desarrolladores podemos ver tus montos de dinero en la base de datos. ¡Están bloqueados solo para ti!
               </p>
             </div>
           </div>
