@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Lock, Mail, User, ArrowRight, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail, User, ArrowRight, Loader2, ShieldCheck } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import { GoogleLogin } from '@react-oauth/google'
 import api from '../lib/api'
@@ -263,13 +263,25 @@ export default function Login() {
 
 
           {mode === 'register' && (
-            <p className="text-xs text-slate-500 text-center">
+            <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-3 flex items-start gap-3 mt-4 animate-fade-in">
+              <ShieldCheck className="w-5 h-5 text-brand-400 shrink-0 mt-0.5" />
+              <div className="text-left">
+                <p className="text-xs font-semibold text-slate-200 mb-0.5">Seguridad y Privacidad Maxima</p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Tus datos financieros están protegidos con <strong>cifrado de grado bancario (AES-256) end-to-end</strong>. Nadie, excepto tú, puede ver tu dinero y contraseñas.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {mode === 'register' && (
+            <p className="text-xs text-slate-500 text-center mt-4">
               Al registrarte aceptas nuestros{' '}
               <span 
                 onClick={() => setShowTerms(true)}
-                className="text-brand-400 cursor-pointer hover:underline"
+                className="text-brand-400 cursor-pointer hover:underline font-medium"
               >
-                términos de uso
+                términos y condiciones de seguridad
               </span>
             </p>
           )}
