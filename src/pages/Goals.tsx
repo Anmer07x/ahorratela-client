@@ -94,7 +94,7 @@ export default function Goals() {
         </select>
       </div>
 
-      {isLoading ? (
+      {isLoading && goals.length === 0 ? (
         <div className="text-center py-10 text-slate-400">Cargando metas...</div>
       ) : filteredGoals.length === 0 ? (
         <div className="card p-10 text-center space-y-4">
@@ -155,7 +155,14 @@ function getSavingsAdvice(goal: Goal): { weekly: number; monthly: number; daysLe
   const remaining = Number(goal.remaining_amount)
   if (remaining <= 0) return null
 
-  const daysLeft = differenceInCalendarDays(parseISO(goal.deadline), new Date())
+  // Treat 'YYYY-MM-DD' as local noon to avoid timezone shifts
+  const [year, month, day] = goal.deadline.split('T')[0].split('-').map(Number)
+  const deadlineDate = new Date(year, month - 1, day, 12, 0, 0)
+  
+  const today = new Date()
+  today.setHours(12, 0, 0, 0)
+
+  const daysLeft = differenceInCalendarDays(deadlineDate, today)
   if (daysLeft <= 0) return null
 
   const weekly = remaining / (daysLeft / 7)
@@ -206,7 +213,7 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
             className="progress-fill h-full"
             style={{
               width: `${pct}%`,
-              background: pct >= 100 ? '#3b82f6' : `linear-gradient(90deg, ${goal.color}80, ${goal.color})`,
+              backgroundColor: pct >= 100 ? '#3b82f6' : goal.color,
             }}
           />
         </div>

@@ -110,6 +110,7 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
             <input
               type="date"
               className="input"
+              min={new Date().toLocaleDateString('en-CA')}
               value={formData.deadline}
               onChange={e => setFormData({ ...formData, deadline: e.target.value })}
             />

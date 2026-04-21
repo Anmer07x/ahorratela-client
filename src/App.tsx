@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard'
 import Goals from './pages/Goals'
 import Transactions from './pages/Transactions'
 import WeeklyReport from './pages/WeeklyReport'
+import MonthlyReport from './pages/MonthlyReport'
 import Settings from './pages/Settings'
 
 // Route Guard
@@ -88,6 +89,7 @@ function App() {
             <Route path="/goals/:id" element={<Goals />} /> {/* Goal Detail future expansion */}
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/weekly" element={<WeeklyReport />} />
+            <Route path="/monthly" element={<MonthlyReport />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
 

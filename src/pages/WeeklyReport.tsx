@@ -48,7 +48,7 @@ export default function WeeklyReport() {
     return () => window.removeEventListener('focus', onFocus)
   }, [fetchData])
 
-  if (isLoading) {
+  if (isLoading && history.length === 0 && !currentWeek) {
     return <div className="text-center py-10 text-slate-400">Cargando control semanal...</div>
   }
 

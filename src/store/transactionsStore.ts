@@ -19,6 +19,8 @@ export interface Transaction {
   category_icon?: string
   category_color?: string
   goal_name?: string
+  parent_id?: string
+  split_percent?: number
 }
 
 export interface Summary {
@@ -74,6 +76,10 @@ export const useTransactionsStore = create<TransactionsState>((set) => ({
     const res = await api.post('/transactions', data)
     const tx = res.data.data
     set((state) => ({ transactions: [tx, ...state.transactions] }))
+    // Actualizar resumen para que el dashboard se refresque
+    const state = useTransactionsStore.getState()
+    await state.fetchSummary()
+    return tx
   },
 
   confirmTransaction: async (id) => {
@@ -83,6 +89,9 @@ export const useTransactionsStore = create<TransactionsState>((set) => ({
         t.id === id ? { ...t, is_projected: false } : t
       )
     }))
+    // Actualizar resumen para el dashboard
+    const state = useTransactionsStore.getState()
+    await state.fetchSummary()
   },
 
   deleteTransaction: async (id) => {
@@ -90,5 +99,8 @@ export const useTransactionsStore = create<TransactionsState>((set) => ({
     set((state) => ({
       transactions: state.transactions.filter((t) => t.id !== id),
     }))
+    // Actualizar resumen para el dashboard
+    const state = useTransactionsStore.getState()
+    await state.fetchSummary()
   },
 }))

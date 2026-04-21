@@ -247,13 +247,17 @@ export default function Login() {
             <div className="relative flex justify-center text-sm"><span className="bg-surface-800/80 px-2 text-slate-500">Inicia rápidamente con</span></div>
           </div>
           
-          <div className="flex justify-center mb-6">
-            <GoogleLogin
-              onSuccess={res => { if (res.credential) handleGoogleLogin(res.credential) }}
-              onError={() => setError('Conexión anulada')}
-              theme="filled_black"
-              shape="pill"
-            />
+          <div className="flex justify-center w-full mt-4">
+            <div className="w-full overflow-hidden flex justify-center">
+              <GoogleLogin
+                onSuccess={res => { if (res.credential) handleGoogleLogin(res.credential) }}
+                onError={() => setError('Conexión anulada')}
+                theme="filled_black"
+                shape="pill"
+                size="large"
+                locale="es"
+              />
+            </div>
           </div>
 
 

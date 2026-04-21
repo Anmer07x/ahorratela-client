@@ -17,6 +17,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
   const [splitPercent, setSplitPercent] = useState(70)
   const [splitGoalId, setSplitGoalId] = useState('')
   const [isProjected, setIsProjected] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
   
   const [formData, setFormData] = useState({
     type: 'expense' as Transaction['type'],
@@ -24,7 +25,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
     description: '',
     goalId: '',
     source: '',
-    transactionDate: new Date().toISOString().split('T')[0],
+    transactionDate: new Date().toLocaleDateString('en-CA'),
     isProjected: false
   })
 
@@ -42,7 +43,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
       description: '',
       goalId: '',
       source: '',
-      transactionDate: new Date().toISOString().split('T')[0],
+      transactionDate: new Date().toLocaleDateString('en-CA'),
       isProjected: false
     })
     setSplitIncome(false)
@@ -62,6 +63,21 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMsg('')
+    
+    // Validar fondos si es gasto
+    if (formData.type === 'expense' && !isProjected) {
+      const state = useTransactionsStore.getState()
+      const summary = state.summary
+      const incomeForPocket = (Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0))
+      const availablePocketMoney = incomeForPocket - Number(summary?.total_expenses ?? 0)
+
+      if (rawAmount > availablePocketMoney) {
+        setErrorMsg('Oe, y vos de donde estas sacando esa plata? (Saldo disponible insuficiente)')
+        return
+      }
+    }
+
     setLoading(true)
     try {
       const payload: any = {
@@ -72,18 +88,22 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
         isProjected: isProjected
       }
       
-      if (formData.type === 'saving' && formData.goalId) payload.goalId = formData.goalId
-      if (formData.type === 'income') payload.source = formData.source
+      if (formData.type === 'income' && splitIncome) {
+        payload.splitPercent = splitPercent;
+      }
 
-      await createTransaction(payload)
+      const mainTx = await createTransaction(payload)
 
-      if (formData.type === 'income' && splitIncome && splitGoalId) {
+      if (formData.type === 'income' && splitIncome && splitGoalId && mainTx?.id) {
         await createTransaction({
           type: 'saving',
           amount: splitSavingAmount,
           description: `Ahorro automático (${splitPercent}%) de: ${formData.description}`,
           goalId: splitGoalId,
-          transactionDate: formData.transactionDate
+          transactionDate: formData.transactionDate,
+          parentId: mainTx.id,
+          splitPercent: splitPercent,
+          isProjected: isProjected
         })
       }
 
@@ -139,6 +159,13 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                 <ArrowLeftRight className="text-brand-400" />
                 Registrar Movimiento
               </h3>
+
+              {errorMsg && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm font-medium flex items-center gap-2">
+                  <span className="text-xl shrink-0">🤔</span>
+                  {errorMsg}
+                </div>
+              )}
 
               <div className="flex bg-surface-900/60 rounded-xl p-1 mb-8">
                 {[
@@ -226,13 +253,14 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="input-label">Fecha</label>
-                    <input
-                      required
-                      type="date"
-                      className="input h-12"
-                      value={formData.transactionDate}
-                      onChange={e => setFormData({ ...formData, transactionDate: e.target.value })}
-                    />
+                      <input
+                        required
+                        type="date"
+                        className="input h-12"
+                        min={new Date().toLocaleDateString('en-CA')}
+                        value={formData.transactionDate}
+                        onChange={e => setFormData({ ...formData, transactionDate: e.target.value })}
+                      />
                   </div>
 
                   {formData.type === 'saving' && (
@@ -282,7 +310,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                       <div className="bg-surface-900/60 p-5 rounded-2xl border border-brand-500/20 space-y-5 animate-slide-up">
                         <div className="space-y-4">
                           <div className="flex justify-between items-end">
-                            <span className="text-xs text-slate-400 font-bold uppercase">Porcentaje</span>
+                            <span className="text-xs text-slate-400 font-bold uppercase">Porcentaje de ahorro</span>
                             <span className="text-xl font-black text-brand-400">{splitPercent}%</span>
                           </div>
                           <input 
@@ -293,16 +321,21 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                             onChange={e => setSplitPercent(Number(e.target.value))} 
                             className="w-full accent-brand-500 h-1.5 bg-surface-800 rounded-lg appearance-none cursor-pointer" 
                           />
-                          <div className="bg-white/5 p-3 rounded-xl">
-                            <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Cálculo estimado</p>
-                            <p className="text-xs text-slate-300">
-                              Ahorro: <strong className="text-brand-300">${splitSavingAmount.toLocaleString('es-CO')}</strong>
-                            </p>
-                            {rawAmount > 0 && (
-                              <p className="text-xs text-slate-500 mt-0.5">
-                                Resto: ${(rawAmount - splitSavingAmount).toLocaleString('es-CO')}
+                          
+                          {/* Desglose solicitado por el usuario */}
+                          <div className="grid grid-cols-2 gap-2 mt-4">
+                            <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                              <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Para ti ({100 - splitPercent}%)</p>
+                              <p className="text-sm font-black text-white">
+                                ${ (rawAmount - splitSavingAmount).toLocaleString('es-CO') }
                               </p>
-                            )}
+                            </div>
+                            <div className="bg-brand-500/5 p-3 rounded-xl border border-brand-500/10">
+                              <p className="text-[10px] text-brand-500/70 uppercase font-bold mb-1">Ahorro ({splitPercent}%)</p>
+                              <p className="text-sm font-black text-brand-400">
+                                ${ splitSavingAmount.toLocaleString('es-CO') }
+                              </p>
+                            </div>
                           </div>
                         </div>
                         <div className="space-y-2">

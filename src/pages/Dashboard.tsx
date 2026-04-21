@@ -47,7 +47,7 @@ export default function Dashboard() {
 
   // Fix: Memoize tip to prevent flicker on re-renders
   const dailyTip = useMemo(() => getRandomTip(), [])
-  
+
   const [showProjected, setShowProjected] = useState(false)
 
   useEffect(() => {
@@ -67,17 +67,50 @@ export default function Dashboard() {
       Ahorros: t.type === 'saving' ? Number(t.amount) : 0,
     }))
 
+  // Lógica de "Dinero para el bolsillo" (Ingresos - Ahorros)
+  const incomeForPocket = showProjected
+    ? (Number(summary?.projected_income ?? 0) - Number(summary?.projected_savings ?? 0))
+    : (Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0))
+
+  const availableBalance = incomeForPocket - (showProjected ? Number(summary?.projected_expenses ?? 0) : Number(summary?.total_expenses ?? 0))
+
+  const realIncomeForPocket = Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0)
+  const realAvailableBalance = realIncomeForPocket - Number(summary?.total_expenses ?? 0)
+
   const statCards = [
     {
-      id: 'income-card',
-      label: showProjected ? 'Ingresos (Supuesto)' : 'Ingresos del mes',
+      id: 'available-card',
+      label: showProjected ? 'Dinero. Disp (Supuesto)' : 'Dinero disponible',
+      value: formatCurrency(availableBalance),
+      realValue: showProjected ? formatCurrency(realAvailableBalance) : null,
+      icon: PiggyBank,
+      color: availableBalance >= 0 ? 'text-brand-400' : 'text-red-400',
+      bg: availableBalance >= 0 ? 'bg-brand-500/10' : 'bg-red-500/10',
+      border: availableBalance >= 0 ? 'border-brand-500/20' : 'border-red-500/20',
+      className: 'col-span-2 lg:col-span-1 border-brand-500/30',
+      isProjected: showProjected && (availableBalance !== realAvailableBalance)
+    },
+    {
+      id: 'gross-income-card',
+      label: showProjected ? 'Ingreso Bruto (Supuesto)' : 'Ingreso Bruto',
       value: formatCurrency(showProjected ? summary?.projected_income ?? 0 : summary?.total_income ?? 0),
       realValue: showProjected ? formatCurrency(summary?.total_income ?? 0) : null,
+      icon: TrendingUp,
+      color: 'text-green-400',
+      bg: 'bg-green-500/10',
+      border: 'border-green-500/20',
+      isProjected: showProjected && (Number(summary?.projected_income ?? 0) > Number(summary?.total_income ?? 0)),
+    },
+    {
+      id: 'income-pocket-card',
+      label: showProjected ? 'Sueldo bolsillo (Supuesto)' : 'Sueldo para bolsillo',
+      value: formatCurrency(incomeForPocket),
+      realValue: showProjected ? formatCurrency((Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0))) : null,
       icon: TrendingUp,
       color: 'text-brand-400',
       bg: 'bg-brand-500/10',
       border: 'border-brand-500/20',
-      isProjected: showProjected && (Number(summary?.projected_income ?? 0) > Number(summary?.total_income ?? 0)),
+      isProjected: showProjected && (incomeForPocket > (Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0))),
       style: { color: '#8EDF3E' }
     },
     {
@@ -96,21 +129,12 @@ export default function Dashboard() {
       label: showProjected ? 'Ahorro (Supuesto)' : 'Ahorro del mes',
       value: formatCurrency(showProjected ? summary?.projected_savings ?? 0 : summary?.total_savings ?? 0),
       realValue: showProjected ? formatCurrency(summary?.total_savings ?? 0) : null,
-      icon: PiggyBank,
+      icon: Target,
       color: 'text-blue-400',
       bg: 'bg-blue-500/10',
       border: 'border-blue-500/20',
       isProjected: showProjected && (Number(summary?.projected_savings ?? 0) > Number(summary?.total_savings ?? 0)),
-    },
-    {
-      id: 'goals-card',
-      label: 'Metas activas',
-      value: String(activeGoals.length),
-      icon: Target,
-      color: 'text-yellow-400',
-      bg: 'bg-yellow-500/10',
-      border: 'border-yellow-500/20',
-    },
+    }
   ]
 
   return (
@@ -120,9 +144,9 @@ export default function Dashboard() {
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-surface-800 border border-white/10 flex items-center justify-center p-0 shadow-2xl overflow-hidden shadow-glow-green shrink-0 relative">
             {user?.photoUrl ? (
-              <img 
-                src={user.photoUrl} 
-                alt={user.displayName} 
+              <img
+                src={user.photoUrl}
+                alt={user.displayName}
                 className="w-full h-full object-cover block"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
@@ -145,13 +169,13 @@ export default function Dashboard() {
 
         <div className="flex items-center gap-4">
           <div className="flex items-center bg-surface-800 rounded-xl p-1 border border-white/5">
-            <button 
+            <button
               onClick={() => setShowProjected(false)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!showProjected ? 'bg-brand-500 text-white shadow-glow-green' : 'text-slate-500 hover:text-slate-300'}`}
             >
               REAL
             </button>
-            <button 
+            <button
               onClick={() => setShowProjected(true)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all ${showProjected ? 'bg-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'text-slate-500 hover:text-slate-300'}`}
             >
@@ -166,9 +190,9 @@ export default function Dashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map(({ id, label, value, realValue, icon: Icon, color, bg, border, style, isProjected }: any) => (
-          <div key={id} id={id} className={`card p-5 border ${border} space-y-3 relative overflow-hidden group`}>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        {statCards.map(({ id, label, value, realValue, icon: Icon, color, bg, border, style, isProjected, className }: any) => (
+          <div key={id} id={id} className={`card p-5 border ${border} ${className || ''} space-y-3 relative overflow-hidden group`}>
             {isProjected && (
               <div className="absolute top-0 right-0 px-2 py-0.5 bg-yellow-500 text-slate-900 text-[8px] font-black uppercase tracking-tighter rounded-bl-lg">
                 Proyectado
@@ -229,7 +253,7 @@ export default function Dashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
               <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} width={60}
-                tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
+                tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="Ingresos" stroke="#10b981" strokeWidth={2} fill="url(#colorIncome)" />
               <Area type="monotone" dataKey="Gastos" stroke="#ef4444" strokeWidth={2} fill="url(#colorExpenses)" />
@@ -263,10 +287,10 @@ export default function Dashboard() {
           <div className="grid md:grid-cols-2 gap-4">
             {activeGoals.slice(0, 4).map(goal => {
               // Calculate projected amount for this goal if showProjected is true
-              const projectedAmount = showProjected 
+              const projectedAmount = showProjected
                 ? transactions
-                    .filter(t => t.type === 'saving' && t.goal_id === goal.id && t.is_projected)
-                    .reduce((acc, t) => acc + Number(t.amount), Number(goal.current_amount))
+                  .filter(t => t.type === 'saving' && t.goal_id === goal.id && t.is_projected)
+                  .reduce((acc, t) => acc + Number(t.amount), Number(goal.current_amount))
                 : Number(goal.current_amount)
 
               const displayCurrent = showProjected ? projectedAmount : Number(goal.current_amount)
@@ -278,9 +302,8 @@ export default function Dashboard() {
                 <Link
                   key={goal.id}
                   to={`/goals/${goal.id}`}
-                  className={`card-hover p-5 block space-y-4 relative overflow-hidden ${
-                    isImproved ? 'border-yellow-500/20 bg-yellow-500/[0.02]' : ''
-                  }`}
+                  className={`card-hover p-5 block space-y-4 relative overflow-hidden ${isImproved ? 'border-yellow-500/20 bg-yellow-500/[0.02]' : ''
+                    }`}
                 >
                   {isImproved && (
                     <div className="absolute top-0 right-0 px-2 py-0.5 bg-yellow-500 text-slate-900 text-[8px] font-black uppercase tracking-tighter rounded-bl-lg">
@@ -306,10 +329,9 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <span
-                      className={`text-sm font-bold ${
-                        isImproved ? 'text-yellow-500' :
-                        pct >= 80 ? 'text-brand-400' : pct >= 40 ? 'text-yellow-400' : 'text-slate-400'
-                      }`}
+                      className={`text-sm font-bold ${isImproved ? 'text-yellow-500' :
+                          pct >= 80 ? 'text-brand-400' : pct >= 40 ? 'text-yellow-400' : 'text-slate-400'
+                        }`}
                     >
                       {pct.toFixed(0)}%
                     </span>
@@ -321,11 +343,11 @@ export default function Dashboard() {
                         width: `${pct}%`,
                         background: isImproved
                           ? 'linear-gradient(90deg, #ca8a0480, #eab308)'
-                          : pct >= 100 
-                          ? '#3b82f6' 
-                          : pct >= 1 
-                          ? 'linear-gradient(90deg, #8EDF3E80, #8EDF3E)' 
-                          : '#1e293b',
+                          : pct >= 100
+                            ? '#3b82f6'
+                            : pct >= 1
+                              ? 'linear-gradient(90deg, #8EDF3E80, #8EDF3E)'
+                              : '#1e293b',
                       }}
                     />
                   </div>
@@ -349,7 +371,7 @@ export default function Dashboard() {
           </Link>
         </div>
         <div className="card divide-y divide-white/5">
-          {transactions.slice(0, 6).map(tx => (
+          {transactions.slice(0, 5).map(tx => (
             <div key={tx.id} className="flex items-center justify-between px-5 py-4">
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm relative
@@ -371,9 +393,8 @@ export default function Dashboard() {
                   </p>
                 </div>
               </div>
-              <span className={`text-sm font-semibold ${
-                tx.type === 'income' ? 'text-brand-400' : tx.type === 'expense' ? 'text-red-400' : 'text-blue-400'
-              } ${tx.is_projected ? 'opacity-60 italic' : ''}`}>
+              <span className={`text-sm font-semibold ${tx.type === 'income' ? 'text-brand-400' : tx.type === 'expense' ? 'text-red-400' : 'text-blue-400'
+                } ${tx.is_projected ? 'opacity-60 italic' : ''}`}>
                 {tx.type === 'expense' ? '-' : '+'}{formatCurrency(tx.amount)}
               </span>
             </div>
