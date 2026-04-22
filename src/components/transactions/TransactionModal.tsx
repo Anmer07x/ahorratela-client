@@ -229,7 +229,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
               </div>
 
               {/* Tipo Info Box con más espacio y mejor diseño */}
-              <div className="mt-6 bg-brand-500/[0.03] border border-brand-500/10 rounded-2xl p-4 flex gap-4 items-start animate-fade-in shadow-inner">
+              <div className="mt-6 mb-8 bg-brand-500/[0.03] border border-brand-500/10 rounded-2xl p-4 flex gap-4 items-start animate-fade-in shadow-inner">
                 <div className={`p-2 rounded-xl bg-surface-900 border border-white/5 shadow-sm ${
                   formData.type === 'income' ? 'text-green-400' : 
                   formData.type === 'expense' ? 'text-red-400' : 'text-blue-400'

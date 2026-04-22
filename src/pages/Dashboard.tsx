@@ -189,11 +189,9 @@ export default function Dashboard() {
               </div>
             )}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 group/info relative">
+              <div className="flex items-center gap-1.5 group/info relative cursor-help">
                 <p className="text-xs text-slate-400 font-semibold tracking-tight">{label}</p>
-                <div className="p-1 rounded-full hover:bg-white/5 transition-colors cursor-help">
-                  <Info className="w-3.5 h-3.5 text-slate-500 group-hover/info:text-brand-400 transition-colors" />
-                </div>
+                <Info className="w-3 h-3 text-slate-600 group-hover/info:text-brand-400 transition-colors" />
                 
                 {/* Tooltip */}
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-surface-900 border border-white/10 rounded-lg text-[10px] text-slate-300 shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-30 pointer-events-none leading-relaxed text-center">
