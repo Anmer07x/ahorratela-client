@@ -6,6 +6,7 @@ import GoalModal from '../components/goals/GoalModal'
 import ConfirmModal from '../components/ui/ConfirmModal'
 import { format, parseISO, differenceInCalendarDays } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { parseLocalDate } from '../utils/dates'
 
 export default function Goals() {
   const { goals, fetchGoals, deleteGoal, isLoading } = useGoalsStore()
@@ -151,13 +152,11 @@ export default function Goals() {
 
 // ─── Savings advice calculator ────────────────────────────────────────────────
 function getSavingsAdvice(goal: Goal): { weekly: number; monthly: number; daysLeft: number } | null {
-  if (!goal.deadline) return null
+  const deadlineDate = parseLocalDate(goal.deadline)
+  if (!deadlineDate) return null
+
   const remaining = Number(goal.remaining_amount)
   if (remaining <= 0) return null
-
-  // Treat 'YYYY-MM-DD' as local noon to avoid timezone shifts
-  const [year, month, day] = goal.deadline.split('T')[0].split('-').map(Number)
-  const deadlineDate = new Date(year, month - 1, day, 12, 0, 0)
   
   const today = new Date()
   today.setHours(12, 0, 0, 0)
@@ -171,7 +170,13 @@ function getSavingsAdvice(goal: Goal): { weekly: number; monthly: number; daysLe
 }
 
 function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, onDelete: () => void }) {
-  const pct = Math.min(100, Number(goal.progress_percentage) || 0)
+  // Ensure numeric safety for Android/Older browsers
+  const current_amount = Number(goal.current_amount) || 0
+  const target_amount = Number(goal.target_amount) || 0
+  const remaining_amount = Number(goal.remaining_amount) || 0
+  const progress_percentage = Number(goal.progress_percentage) || 0
+  
+  const pct = Math.min(100, progress_percentage)
   const advice = getSavingsAdvice(goal)
 
   return (
@@ -186,7 +191,7 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
             {goal.deadline && (
               <p className="text-xs text-slate-400 flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                Hasta: {format(parseISO(goal.deadline), 'd MMM yyyy', { locale: es })}
+                Hasta: {format(parseLocalDate(goal.deadline)!, 'd MMM yyyy', { locale: es })}
               </p>
             )}
           </div>
@@ -205,7 +210,7 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
         <div className="flex justify-between text-sm">
           <span className="text-slate-400">Progreso</span>
           <span className="font-medium text-slate-200">
-             {formatCurrency(goal.current_amount)} / {formatCurrency(goal.target_amount)}
+             {formatCurrency(current_amount)} / {formatCurrency(target_amount)}
           </span>
         </div>
         <div className="progress-bar h-2.5">
@@ -219,7 +224,7 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
         </div>
         <div className="flex justify-between text-xs text-slate-500 mt-1">
           <span>{pct.toFixed(1)}% completado</span>
-          {pct < 100 && <span>Falta {formatCurrency(goal.remaining_amount)}</span>}
+          {pct < 100 && <span>Falta {formatCurrency(remaining_amount)}</span>}
         </div>
       </div>
 

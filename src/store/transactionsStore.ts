@@ -27,10 +27,14 @@ export interface Summary {
   total_income: number
   total_expenses: number
   total_savings: number
+  monthly_income: number
+  monthly_expenses: number
+  monthly_savings: number
   projected_income: number
   projected_expenses: number
   projected_savings: number
-  total_transactions: number
+  available_balance: number
+  total_net_worth: number
 }
 
 interface TransactionsState {

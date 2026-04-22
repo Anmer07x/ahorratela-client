@@ -65,15 +65,17 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
     e.preventDefault()
     setErrorMsg('')
     
-    // Validar fondos si es gasto
-    if (formData.type === 'expense' && !isProjected) {
+    // Validar fondos si es gasto o ahorro manual
+    if ((formData.type === 'expense' || formData.type === 'saving') && !isProjected) {
       const state = useTransactionsStore.getState()
       const summary = state.summary
-      const incomeForPocket = (Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0))
-      const availablePocketMoney = incomeForPocket - Number(summary?.total_expenses ?? 0)
+      const availablePocketMoney = Number(summary?.available_balance ?? 0)
 
       if (rawAmount > availablePocketMoney) {
-        setErrorMsg('Oe, y vos de donde estas sacando esa plata? (Saldo disponible insuficiente)')
+        const msg = formData.type === 'expense' 
+          ? 'Oe, y vos de donde estas sacando esa plata? (Saldo disponible insuficiente)' 
+          : 'No puedes ahorrar lo que no tienes. (Saldo insuficiente en el bolsillo)'
+        setErrorMsg(msg)
         return
       }
     }
@@ -111,8 +113,9 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
       await fetchGoals()
 
       setShowSuccess(true)
-    } catch (err) {
-      console.error(err)
+    } catch (err: any) {
+      console.error('Submit error:', err)
+      setErrorMsg('Error al guardar el movimiento. Por favor intenta de nuevo.')
     } finally {
       setLoading(false)
     }

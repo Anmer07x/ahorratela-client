@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   TrendingUp, TrendingDown, PiggyBank, Target,
-  ArrowRight, Plus, Lightbulb, User as UserIcon, CalendarClock
+  ArrowRight, Plus, Lightbulb, User as UserIcon, CalendarClock, Wallet
 } from 'lucide-react'
 import { getRandomTip } from '../utils/tips'
 import { useAuthStore } from '../store/authStore'
@@ -67,73 +67,58 @@ export default function Dashboard() {
       Ahorros: t.type === 'saving' ? Number(t.amount) : 0,
     }))
 
-  // Lógica de "Dinero para el bolsillo" (Ingresos - Ahorros)
-  const incomeForPocket = showProjected
-    ? (Number(summary?.projected_income ?? 0) - Number(summary?.projected_savings ?? 0))
-    : (Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0))
-
-  const availableBalance = incomeForPocket - (showProjected ? Number(summary?.projected_expenses ?? 0) : Number(summary?.total_expenses ?? 0))
-
-  const realIncomeForPocket = Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0)
-  const realAvailableBalance = realIncomeForPocket - Number(summary?.total_expenses ?? 0)
+  // Dinero disponible (Acumulado)
+  const availableBalance = Number(summary?.available_balance ?? 0)
+  const totalNetWorth = Number(summary?.total_net_worth ?? 0)
 
   const statCards = [
     {
+      id: 'total-net-card',
+      label: 'Saldo Total',
+      value: formatCurrency(totalNetWorth),
+      icon: Wallet,
+      color: 'text-blue-400',
+      bg: 'bg-blue-500/10',
+      border: 'border-blue-500/20',
+      className: 'col-span-2 lg:col-span-1 border-blue-500/30 shadow-glow-blue/10',
+    },
+    {
       id: 'available-card',
-      label: showProjected ? 'Dinero. Disp (Supuesto)' : 'Dinero disponible',
+      label: showProjected ? 'Disponible (Supuesto)' : 'Dinero disponible',
       value: formatCurrency(availableBalance),
-      realValue: showProjected ? formatCurrency(realAvailableBalance) : null,
       icon: PiggyBank,
       color: availableBalance >= 0 ? 'text-brand-400' : 'text-red-400',
       bg: availableBalance >= 0 ? 'bg-brand-500/10' : 'bg-red-500/10',
       border: availableBalance >= 0 ? 'border-brand-500/20' : 'border-red-500/20',
-      className: 'col-span-2 lg:col-span-1 border-brand-500/30',
-      isProjected: showProjected && (availableBalance !== realAvailableBalance)
+      className: 'col-span-2 lg:col-span-1',
     },
     {
       id: 'gross-income-card',
-      label: showProjected ? 'Ingreso Bruto (Supuesto)' : 'Ingreso Bruto',
-      value: formatCurrency(showProjected ? summary?.projected_income ?? 0 : summary?.total_income ?? 0),
-      realValue: showProjected ? formatCurrency(summary?.total_income ?? 0) : null,
+      label: showProjected ? 'Ingreso Mes (Supuesto)' : 'Ingreso del mes',
+      value: formatCurrency(showProjected ? summary?.projected_income ?? 0 : summary?.monthly_income ?? 0),
       icon: TrendingUp,
       color: 'text-green-400',
       bg: 'bg-green-500/10',
       border: 'border-green-500/20',
-      isProjected: showProjected && (Number(summary?.projected_income ?? 0) > Number(summary?.total_income ?? 0)),
-    },
-    {
-      id: 'income-pocket-card',
-      label: showProjected ? 'Sueldo bolsillo (Supuesto)' : 'Sueldo para bolsillo',
-      value: formatCurrency(incomeForPocket),
-      realValue: showProjected ? formatCurrency((Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0))) : null,
-      icon: TrendingUp,
-      color: 'text-brand-400',
-      bg: 'bg-brand-500/10',
-      border: 'border-brand-500/20',
-      isProjected: showProjected && (incomeForPocket > (Number(summary?.total_income ?? 0) - Number(summary?.total_savings ?? 0))),
-      style: { color: '#8EDF3E' }
     },
     {
       id: 'expenses-card',
-      label: showProjected ? 'Gastos (Supuesto)' : 'Gastos del mes',
-      value: formatCurrency(showProjected ? summary?.projected_expenses ?? 0 : summary?.total_expenses ?? 0),
-      realValue: showProjected ? formatCurrency(summary?.total_expenses ?? 0) : null,
+      label: showProjected ? 'Gastos Mes (Supuesto)' : 'Gastos del mes',
+      value: formatCurrency(showProjected ? summary?.projected_expenses ?? 0 : summary?.monthly_expenses ?? 0),
       icon: TrendingDown,
       color: 'text-red-400',
       bg: 'bg-red-500/10',
       border: 'border-red-500/20',
-      isProjected: showProjected && (Number(summary?.projected_expenses ?? 0) > Number(summary?.total_expenses ?? 0)),
     },
     {
       id: 'savings-card',
-      label: showProjected ? 'Ahorro (Supuesto)' : 'Ahorro del mes',
-      value: formatCurrency(showProjected ? summary?.projected_savings ?? 0 : summary?.total_savings ?? 0),
-      realValue: showProjected ? formatCurrency(summary?.total_savings ?? 0) : null,
+      label: showProjected ? 'Ahorro Mes (Supuesto)' : 'Ahorro del mes',
+      value: formatCurrency(showProjected ? summary?.projected_savings ?? 0 : summary?.monthly_savings ?? 0),
       icon: Target,
-      color: 'text-blue-400',
-      bg: 'bg-blue-500/10',
-      border: 'border-blue-500/20',
-      isProjected: showProjected && (Number(summary?.projected_savings ?? 0) > Number(summary?.total_savings ?? 0)),
+      color: 'text-brand-400',
+      bg: 'bg-brand-500/10',
+      border: 'border-brand-500/20',
+      style: { color: '#8EDF3E' }
     }
   ]
 
