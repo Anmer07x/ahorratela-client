@@ -13,9 +13,9 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-surface-900 text-slate-200 overflow-x-hidden">
+    <div className="flex h-screen bg-surface-900 text-slate-200 overflow-hidden">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto min-h-screen relative pb-24 md:pb-0">
+      <main className="flex-1 overflow-y-auto relative pb-24 md:pb-0 h-full">
         
         {/* Mobile Header (Solo visible en celular) */}
         <div className="md:hidden flex items-center justify-between px-4 pb-3 bg-surface-800/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-30 shadow-xl"
