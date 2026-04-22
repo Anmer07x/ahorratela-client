@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Target, ArrowLeftRight, BarChart2, Settings } from 'lucide-react'
+import { LayoutDashboard, Target, ArrowLeftRight, BarChart2, Settings, CalendarDays } from 'lucide-react'
 import clsx from 'clsx'
 
 const items = [
   { to: '/dashboard',    icon: LayoutDashboard, label: 'Inicio' },
   { to: '/goals',        icon: Target,           label: 'Metas' },
   { to: '/transactions', icon: ArrowLeftRight,   label: 'Movimientos' },
+  { to: '/monthly',      icon: CalendarDays,     label: 'Mensual' },
   { to: '/weekly',       icon: BarChart2,         label: 'Semanal' },
   { to: '/settings',     icon: Settings,          label: 'Config' },
 ]
