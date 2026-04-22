@@ -27,7 +27,7 @@ interface GoalsState {
   deleteGoal: (id: string) => Promise<void>
 }
 
-export const useGoalsStore = create<GoalsState>((set) => ({
+export const useGoalsStore = create<GoalsState>((set, get) => ({
   goals: [],
   isLoading: false,
   error: null,
@@ -47,7 +47,7 @@ export const useGoalsStore = create<GoalsState>((set) => ({
   createGoal: async (data) => {
     const res = await api.post('/goals', data)
     const goal = res.data.data
-    await useGoalsStore.getState().fetchGoals()
+    await get().fetchGoals()
     return goal
   },
 
