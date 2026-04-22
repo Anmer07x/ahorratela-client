@@ -58,9 +58,15 @@ api.interceptors.response.use(
         processQueue(null, accessToken)
         originalRequest.headers.Authorization = `Bearer ${accessToken}`
         return api(originalRequest)
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         processQueue(refreshError, null)
-        useAuthStore.getState().logout()
+        
+        // Only logout if the server explicitly rejects the refresh token (401/403)
+        // If it's a network error (e.g. 503 or timeout), don't kick the user yet
+        if (refreshError.response?.status === 401 || refreshError.response?.status === 403) {
+          useAuthStore.getState().logout()
+        }
+        
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false

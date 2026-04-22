@@ -127,27 +127,24 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
         isProjected: isProjected
       }
       
-      if (formData.type === 'income' && splitIncome) {
+      // OPTIMIZATION: Send as a single batch request
+      if (formData.type === 'income' && splitIncome && splitGoalId) {
         payload.splitPercent = splitPercent;
-      }
-
-      const mainTx = await createTransaction(payload)
-
-      if (formData.type === 'income' && splitIncome && splitGoalId && mainTx?.id) {
-        await createTransaction({
-          type: 'saving',
+        payload.autoSaving = {
           amount: splitSavingAmount,
-          description: `Ahorro automático (${splitPercent}%) de: ${formData.description}`,
           goalId: splitGoalId,
-          transactionDate: formData.transactionDate,
-          parentId: mainTx.id,
-          splitPercent: splitPercent,
-          isProjected: isProjected
-        })
+          description: `Ahorro automático (${splitPercent}%) de: ${formData.description}`,
+          splitPercent: splitPercent
+        }
       }
 
-      // Refresh goals so current_amount updates immediately in the UI
-      await fetchGoals()
+      await createTransaction(payload)
+
+      // OPTIMIZATION: Parallel fetches
+      await Promise.all([
+        fetchGoals(),
+        fetchSummary()
+      ])
 
       setShowSuccess(true)
     } catch (err: any) {
@@ -163,7 +160,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
   const activeGoals = goals.filter(g => g.status === 'active')
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto overflow-x-hidden">
       <div className="bg-surface-950 w-full max-w-lg rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[95vh] flex flex-col">
         <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar">
         <button onClick={handleClose} className="absolute right-6 top-6 text-slate-400 hover:text-white z-20">

@@ -57,21 +57,23 @@ export default function Dashboard() {
   }, [])
 
   const activeGoals = goals.filter(g => g.status === 'active')
-  const chartData = [...transactions]
-    .slice(0, 14)
-    .reverse()
-    .map(t => ({
-      date: format(parseISO(t.transaction_date || t.created_at), 'd MMM', { locale: es }),
-      Ingresos: t.type === 'income' ? Number(t.amount) : 0,
-      Gastos: t.type === 'expense' ? Number(t.amount) : 0,
-      Ahorros: t.type === 'saving' ? Number(t.amount) : 0,
-    }))
+  const chartData = useMemo(() => {
+    return [...transactions]
+      .slice(0, 14)
+      .reverse()
+      .map(t => ({
+        date: format(parseISO(t.transaction_date || t.created_at), 'd MMM', { locale: es }),
+        Ingresos: t.type === 'income' ? Number(t.amount) : 0,
+        Gastos: t.type === 'expense' ? Number(t.amount) : 0,
+        Ahorros: t.type === 'saving' ? Number(t.amount) : 0,
+      }))
+  }, [transactions])
 
   // Dinero disponible (Acumulado)
   const availableBalance = Number(summary?.available_balance ?? 0)
   const totalNetWorth = Number(summary?.total_net_worth ?? 0)
 
-  const statCards = [
+  const statCards = useMemo(() => [
     {
       id: 'total-net-card',
       label: 'Saldo Total',
@@ -123,10 +125,9 @@ export default function Dashboard() {
       color: 'text-brand-400',
       bg: 'bg-brand-500/10',
       border: 'border-brand-500/20',
-      style: { color: '#8EDF3E' },
       className: 'col-span-2 lg:col-span-1'
     }
-  ]
+  ], [showProjected, summary, availableBalance, totalNetWorth])
 
   return (
     <div className="space-y-8 pb-24 md:pb-0">

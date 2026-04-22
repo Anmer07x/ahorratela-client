@@ -27,11 +27,13 @@ export default function Goals() {
     fetchGoals()
   }, [])
 
-  const filteredGoals = goals.filter(goal => {
-    const matchesSearch = goal.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || goal.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+  const filteredGoals = useMemo(() => {
+    return goals.filter(goal => {
+      const matchesSearch = goal.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesStatus = statusFilter === 'all' || goal.status === statusFilter
+      return matchesSearch && matchesStatus
+    })
+  }, [goals, searchTerm, statusFilter])
 
   const openDeleteConfirm = (id: string, name: string) => {
     setDeleteModal({ isOpen: true, id, name, loading: false })
@@ -55,8 +57,8 @@ export default function Goals() {
   }
 
   // Group goals by status
-  const activeGoals = filteredGoals.filter(g => g.status === 'active')
-  const completedGoals = filteredGoals.filter(g => g.status === 'completed')
+  const activeGoals = useMemo(() => filteredGoals.filter(g => g.status === 'active'), [filteredGoals])
+  const completedGoals = useMemo(() => filteredGoals.filter(g => g.status === 'completed'), [filteredGoals])
 
   return (
     <div className="space-y-6">
