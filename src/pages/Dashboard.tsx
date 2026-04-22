@@ -123,7 +123,8 @@ export default function Dashboard() {
       color: 'text-brand-400',
       bg: 'bg-brand-500/10',
       border: 'border-brand-500/20',
-      style: { color: '#8EDF3E' }
+      style: { color: '#8EDF3E' },
+      className: 'col-span-2 lg:col-span-1'
     }
   ]
 
