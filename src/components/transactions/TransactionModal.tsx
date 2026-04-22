@@ -169,7 +169,6 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
           <X className="w-5 h-5" />
         </button>
         
-        <div className="p-6 md:p-8">
           {showSuccess ? (
             <div className="py-10 flex flex-col items-center text-center space-y-6 animate-fade-in">
               <div className="w-20 h-20 rounded-full bg-brand-500/10 flex items-center justify-center border border-brand-500/20 shadow-glow-green">

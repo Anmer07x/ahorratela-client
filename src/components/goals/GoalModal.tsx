@@ -65,12 +65,12 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
   }
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${isOpen ? '' : 'hidden'}`}>
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="bg-surface-800 rounded-2xl w-full max-w-md p-6 relative z-10 shadow-card border border-white/10 animate-slide-up">
-        <button onClick={onClose} className="absolute right-4 top-4 text-slate-400 hover:text-white">
-          <X className="w-5 h-5" />
-        </button>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto ${isOpen ? '' : 'hidden'}`}>
+      <div className="bg-surface-950 w-full max-w-md rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[95vh] flex flex-col">
+        <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar relative">
+          <button onClick={onClose} className="absolute right-6 top-6 text-slate-400 hover:text-white z-20">
+            <X className="w-5 h-5" />
+          </button>
         
         <h3 className="text-xl font-bold flex items-center gap-2 mb-6">
           <Target className="text-brand-400" />
@@ -161,7 +161,8 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
               {loading ? 'Guardando...' : 'Guardar Meta'}
             </button>
           </div>
-        </form>
+          </div>
+        </div>
       </div>
     </div>
   )

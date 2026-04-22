@@ -194,8 +194,9 @@ export default function Dashboard() {
                 <Info className="w-3 h-3 text-slate-600 cursor-help hover:text-brand-400 transition-colors" />
                 
                 {/* Tooltip */}
-                <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-surface-900 border border-white/10 rounded-lg text-[10px] text-slate-300 shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-30 pointer-events-none leading-relaxed">
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-surface-900 border border-white/10 rounded-lg text-[10px] text-slate-300 shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-30 pointer-events-none leading-relaxed text-center">
                   {info}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-surface-900 border-r border-b border-white/10 rotate-45 -mt-1"></div>
                 </div>
               </div>
               <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center pointer-events-none`}>
