@@ -32,7 +32,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="hidden md:flex flex-col w-[260px] shrink-0 bg-surface-800/60 backdrop-blur-md border-r border-white/5 h-screen sticky top-0">
+    <aside className="hidden md:flex flex-col w-[260px] shrink-0 bg-surface-800/60 backdrop-blur-md border-r border-white/5 h-screen sticky top-0 z-40 overflow-hidden">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-6 border-b border-white/5">
         <div className="w-12 h-12 flex items-center justify-center">
@@ -47,7 +47,7 @@ export default function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-5 space-y-1.5 overflow-y-auto no-scrollbar">
         {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
