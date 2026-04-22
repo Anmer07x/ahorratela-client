@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X, ArrowLeftRight, CalendarClock, CheckCircle2, PlusCircle } from 'lucide-react'
+import { X, ArrowLeftRight, CalendarClock, TrendingUp, TrendingDown, PiggyBank, CheckCircle2, PlusCircle, Info, Wallet } from 'lucide-react'
 import { useTransactionsStore, type Transaction } from '../../store/transactionsStore'
 import { useGoalsStore } from '../../store/goalsStore'
 
@@ -60,6 +60,42 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
 
   const rawAmount = Number(formData.amount.replace(/\D/g, '') || 0)
   const splitSavingAmount = Math.round((rawAmount * splitPercent) / 100)
+
+  // Mensajes informativos por tipo
+  const typeDescriptions: Record<string, { desc: string, impact: string }> = {
+    income: {
+      desc: 'Dinero nuevo que entra a tu cuenta.',
+      impact: 'Aumenta tu Disponible y tu Saldo Total.'
+    },
+    expense: {
+      desc: 'Dinero que sale para pagar algo.',
+      impact: 'Disminuye tu Disponible y tu Saldo Total.'
+    },
+    saving: {
+      desc: 'Mueves dinero de tu bolsillo a una meta.',
+      impact: 'Baja tu Disponible, pero NO afecta tu Saldo Total.'
+    }
+  }
+
+  // Simulación de impacto
+  const currentAvailable = Number(summary?.available_balance ?? 0)
+  const currentTotal = Number(summary?.total_net_worth ?? 0)
+  
+  let simulatedAvailable = currentAvailable
+  let simulatedTotal = currentTotal
+
+  if (!isProjected && rawAmount > 0) {
+    if (formData.type === 'income') {
+      simulatedAvailable += rawAmount
+      simulatedTotal += rawAmount
+    } else if (formData.type === 'expense') {
+      simulatedAvailable -= rawAmount
+      simulatedTotal -= rawAmount
+    } else if (formData.type === 'saving') {
+      simulatedAvailable -= rawAmount
+      // Saldo total stays the same for savings
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -170,7 +206,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                 </div>
               )}
 
-              <div className="flex bg-surface-900/60 rounded-xl p-1 mb-8">
+              <div className="flex bg-surface-900/60 rounded-xl p-1">
                 {[
                   { id: 'expense', label: 'Gasto', color: 'red' },
                   { id: 'income', label: 'Ingreso', color: 'brand' },
@@ -178,6 +214,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                 ].map(type => (
                   <button
                     key={type.id}
+                    type="button"
                     onClick={() => setFormData({ ...formData, type: type.id as any })}
                     className={`flex-1 py-1.5 rounded-lg text-sm font-bold transition-all ${
                       formData.type === type.id 
@@ -191,6 +228,20 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                     {type.label}
                   </button>
                 ))}
+              </div>
+
+              {/* Tipo Info Box */}
+              <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex gap-3 items-start animate-fade-in">
+                <div className={`p-2 rounded-lg bg-surface-900 border border-white/5 ${
+                  formData.type === 'income' ? 'text-green-400' : 
+                  formData.type === 'expense' ? 'text-red-400' : 'text-blue-400'
+                }`}>
+                  <Info className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-300 font-bold mb-0.5">{typeDescriptions[formData.type].desc}</p>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-tight">{typeDescriptions[formData.type].impact}</p>
+                </div>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -352,6 +403,47 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                         </div>
                       </div>
                     )}
+                  </div>
+                )}
+
+                {/* Balance Simulation Display */}
+                {!isProjected && rawAmount > 0 && (
+                  <div className="bg-brand-500/5 border border-brand-500/10 rounded-2xl p-4 space-y-3 animate-fade-in shadow-inner">
+                    <p className="text-[10px] text-brand-400 uppercase tracking-widest font-bold flex items-center gap-2">
+                        <ArrowLeftRight className="w-3 h-3" /> Visualización de impacto
+                    </p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1.5">
+                          <PiggyBank className="w-3 h-3 text-slate-500" />
+                          <span className="text-[10px] text-slate-400 font-medium">Bolsillo (Disponible)</span>
+                        </div>
+                        <div className="flex items-baseline gap-2">
+                          <p className={`text-sm font-bold ${simulatedAvailable < 0 ? 'text-red-400' : 'text-slate-200'}`}>
+                            {formatCurrency(simulatedAvailable)}
+                          </p>
+                          <span className={`text-[10px] font-bold ${formData.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+                            {formData.type === 'income' ? '+' : '-'}{formatCurrency(rawAmount)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-1 border-l border-white/5 pl-4">
+                        <div className="flex items-center gap-1.5">
+                          <Wallet className="w-3 h-3 text-slate-500" />
+                          <span className="text-[10px] text-slate-400 font-medium">Saldo Total</span>
+                        </div>
+                        <p className="text-sm font-bold text-slate-200">
+                          {formatCurrency(simulatedTotal)}
+                        </p>
+                        {formData.type === 'saving' ? (
+                          <span className="text-[8px] text-slate-500 uppercase">Sin cambios (Ahorro)</span>
+                        ) : (
+                          <span className={`text-[10px] font-bold ${formData.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+                            {formData.type === 'income' ? '+' : '-'}{formatCurrency(rawAmount)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
 

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   TrendingUp, TrendingDown, PiggyBank, Target,
-  ArrowRight, Plus, Lightbulb, User as UserIcon, CalendarClock, Wallet
+  ArrowRight, Plus, Lightbulb, User as UserIcon, CalendarClock, Wallet, Info
 } from 'lucide-react'
 import { getRandomTip } from '../utils/tips'
 import { useAuthStore } from '../store/authStore'
@@ -75,6 +75,7 @@ export default function Dashboard() {
     {
       id: 'total-net-card',
       label: 'Saldo Total',
+      info: 'Tu patrimonio neto real (Ingresos - Gastos). Este valor no baja cuando ahorras, ya que el dinero sigue siendo tuyo.',
       value: formatCurrency(totalNetWorth),
       icon: Wallet,
       color: 'text-blue-400',
@@ -85,6 +86,7 @@ export default function Dashboard() {
     {
       id: 'available-card',
       label: showProjected ? 'Disponible (Supuesto)' : 'Dinero disponible',
+      info: 'Dinero real que tienes libre para gastos hoy. Se calcula como: Ingresos - Gastos - Ahorros.',
       value: formatCurrency(availableBalance),
       icon: PiggyBank,
       color: availableBalance >= 0 ? 'text-brand-400' : 'text-red-400',
@@ -95,6 +97,7 @@ export default function Dashboard() {
     {
       id: 'gross-income-card',
       label: showProjected ? 'Ingreso Mes (Supuesto)' : 'Ingreso del mes',
+      info: 'Monto total de dinero que ha ingresado a tus cuentas durante este mes.',
       value: formatCurrency(showProjected ? summary?.projected_income ?? 0 : summary?.monthly_income ?? 0),
       icon: TrendingUp,
       color: 'text-green-400',
@@ -104,6 +107,7 @@ export default function Dashboard() {
     {
       id: 'expenses-card',
       label: showProjected ? 'Gastos Mes (Supuesto)' : 'Gastos del mes',
+      info: 'Total de dinero que has gastado durante el transcurso del mes actual.',
       value: formatCurrency(showProjected ? summary?.projected_expenses ?? 0 : summary?.monthly_expenses ?? 0),
       icon: TrendingDown,
       color: 'text-red-400',
@@ -113,6 +117,7 @@ export default function Dashboard() {
     {
       id: 'savings-card',
       label: showProjected ? 'Ahorro Mes (Supuesto)' : 'Ahorro del mes',
+      info: 'Dinero que has movido de tu bolsillo a tus metas de ahorro este mes.',
       value: formatCurrency(showProjected ? summary?.projected_savings ?? 0 : summary?.monthly_savings ?? 0),
       icon: Target,
       color: 'text-brand-400',
@@ -184,8 +189,16 @@ export default function Dashboard() {
               </div>
             )}
             <div className="flex items-center justify-between">
-              <p className="text-xs text-slate-400 font-medium">{label}</p>
-              <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center`}>
+              <div className="flex items-center gap-1.5 group/info relative">
+                <p className="text-xs text-slate-400 font-medium">{label}</p>
+                <Info className="w-3 h-3 text-slate-600 cursor-help hover:text-brand-400 transition-colors" />
+                
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-surface-900 border border-white/10 rounded-lg text-[10px] text-slate-300 shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-30 pointer-events-none leading-relaxed">
+                  {info}
+                </div>
+              </div>
+              <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center pointer-events-none`}>
                 <Icon className={`w-4 h-4 ${color}`} style={style} />
               </div>
             </div>
