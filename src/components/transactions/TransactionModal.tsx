@@ -127,24 +127,29 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
         isProjected: isProjected
       }
       
-      // OPTIMIZATION: Send as a single batch request
-      if (formData.type === 'income' && splitIncome && splitGoalId) {
+      if (formData.type === 'income' && splitIncome) {
         payload.splitPercent = splitPercent;
-        payload.autoSaving = {
-          amount: splitSavingAmount,
-          goalId: splitGoalId,
-          description: `Ahorro automático (${splitPercent}%) de: ${formData.description}`,
-          splitPercent: splitPercent
-        }
       }
 
-      await createTransaction(payload)
+      const mainTx = await createTransaction(payload)
 
-      // OPTIMIZATION: Parallel fetches
-      await Promise.all([
-        fetchGoals(),
-        fetchSummary()
-      ])
+      if (formData.type === 'income' && splitIncome && splitGoalId && mainTx?.id) {
+        await createTransaction({
+          type: 'saving',
+          amount: splitSavingAmount,
+          description: `Ahorro automático (${splitPercent}%) de: ${formData.description}`,
+          goalId: splitGoalId,
+          transactionDate: formData.transactionDate,
+          parentId: mainTx.id,
+          splitPercent: splitPercent,
+          isProjected: isProjected
+        })
+      }
+
+      // Refresh goals so current_amount updates immediately in the UI
+      await fetchGoals()
+      // Refresh summary
+      await fetchSummary()
 
       setShowSuccess(true)
     } catch (err: any) {
