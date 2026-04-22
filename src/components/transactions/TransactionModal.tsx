@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { X, ArrowLeftRight, CalendarClock, TrendingUp, TrendingDown, PiggyBank, CheckCircle2, PlusCircle, Info, Wallet } from 'lucide-react'
 import { useTransactionsStore, type Transaction } from '../../store/transactionsStore'
 import { useGoalsStore } from '../../store/goalsStore'
+import { formatCurrency } from '../../utils/format'
 
 interface TransactionModalProps {
   isOpen: boolean
