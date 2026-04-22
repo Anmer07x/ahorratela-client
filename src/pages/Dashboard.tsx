@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   TrendingUp, TrendingDown, PiggyBank, Target,
-  ArrowRight, Plus, Lightbulb, User as UserIcon, CalendarClock, Wallet, Info
+  ArrowRight, Plus, Lightbulb, User as UserIcon, CalendarClock, Wallet
 } from 'lucide-react'
 import { getRandomTip } from '../utils/tips'
 import { useAuthStore } from '../store/authStore'
@@ -189,18 +189,19 @@ export default function Dashboard() {
               </div>
             )}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 group/info relative cursor-help">
-                <p className="text-xs text-slate-400 font-semibold tracking-tight">{label}</p>
-                <Info className="w-3 h-3 text-slate-600 group-hover/info:text-brand-400 transition-colors" />
-                
-                {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-surface-900 border border-white/10 rounded-lg text-[10px] text-slate-300 shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-30 pointer-events-none leading-relaxed text-center">
-                  {info}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-surface-900 border-r border-b border-white/10 rotate-45 -mt-1"></div>
-                </div>
+              <div className="relative">
+                <p className="text-xs text-slate-400 font-semibold tracking-tight leading-none">{label}</p>
               </div>
-              <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center pointer-events-none`}>
-                <Icon className={`w-4 h-4 ${color}`} style={style} />
+              <div className="group/info relative">
+                <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center cursor-help transition-all group-hover/info:scale-110 group-hover/info:shadow-lg`}>
+                  <Icon className={`w-4 h-4 ${color}`} style={style} />
+                </div>
+                
+                {/* Tooltip centrado sobre el icono */}
+                <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-surface-900 border border-white/10 rounded-lg text-[10px] text-slate-300 shadow-2xl opacity-0 invisible group-hover/info:opacity-100 group-hover/info:visible transition-all z-30 pointer-events-none leading-relaxed text-center">
+                  {info}
+                  <div className="absolute top-full right-3 w-2 h-2 bg-surface-900 border-r border-b border-white/10 rotate-45 -mt-1"></div>
+                </div>
               </div>
             </div>
             <div className="space-y-1">
