@@ -71,97 +71,97 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
           <button onClick={onClose} className="absolute right-6 top-6 text-slate-400 hover:text-white z-20">
             <X className="w-5 h-5" />
           </button>
-        
-        <h3 className="text-xl font-bold flex items-center gap-2 mb-6">
-          <Target className="text-brand-400" />
-          {goalToEdit ? 'Editar Meta' : 'Nueva Meta'}
-        </h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="input-label">Nombre de la meta</label>
-            <input
-              required
-              className="input"
-              placeholder="Ej. Moto Nueva, Vacaciones"
-              value={formData.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
-            />
-          </div>
+          <h3 className="text-xl font-bold flex items-center gap-2 mb-6">
+            <Target className="text-brand-400" />
+            {goalToEdit ? 'Editar Meta' : 'Nueva Meta'}
+          </h3>
 
-          <div>
-            <label className="input-label">Monto objetivo (COP)</label>
-            <input
-              required
-              type="text"
-              className="input"
-              placeholder="0"
-              value={formData.targetAmount}
-              onChange={e => {
-                const numericValue = e.target.value.replace(/\D/g, '')
-                const formatted = numericValue ? Number(numericValue).toLocaleString('es-CO') : ''
-                setFormData({ ...formData, targetAmount: formatted })
-              }}
-            />
-          </div>
-
-          <div>
-            <label className="input-label">Fecha límite (Opcional)</label>
-            <input
-              type="date"
-              className="input"
-              min={new Date().toLocaleDateString('en-CA')}
-              value={formData.deadline}
-              onChange={e => setFormData({ ...formData, deadline: e.target.value })}
-            />
-          </div>
-
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="input-label">Emoji / Icono</label>
-              <input
-                className="input text-center text-xl"
-                value={formData.icon}
-                maxLength={2}
-                onChange={e => setFormData({ ...formData, icon: e.target.value })}
-              />
-            </div>
-            <div className="flex-1">
-              <label className="input-label">Color</label>
-              <input
-                type="color"
-                className="input p-1 h-[42px]"
-                value={formData.color}
-                onChange={e => setFormData({ ...formData, color: e.target.value })}
-              />
-            </div>
-          </div>
-
-          {goalToEdit && (
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="input-label">Estado</label>
-              <select
+              <label className="input-label">Nombre de la meta</label>
+              <input
+                required
                 className="input"
-                value={formData.status}
-                onChange={e => setFormData({ ...formData, status: e.target.value as Goal['status'] })}
-              >
-                <option value="active">Activa</option>
-                <option value="paused">Pausada</option>
-                <option value="completed">Completada</option>
-                <option value="cancelled">Cancelada</option>
-              </select>
+                placeholder="Ej. Moto Nueva, Vacaciones"
+                value={formData.name}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
+              />
             </div>
-          )}
 
-          <div className="pt-4 border-t border-white/10 flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="btn-secondary">
-              Cancelar
-            </button>
-            <button type="submit" disabled={loading} className="btn-primary">
-              {loading ? 'Guardando...' : 'Guardar Meta'}
-            </button>
-          </div>
-          </div>
+            <div>
+              <label className="input-label">Monto objetivo (COP)</label>
+              <input
+                required
+                type="text"
+                className="input"
+                placeholder="0"
+                value={formData.targetAmount}
+                onChange={e => {
+                  const numericValue = e.target.value.replace(/\D/g, '')
+                  const formatted = numericValue ? Number(numericValue).toLocaleString('es-CO') : ''
+                  setFormData({ ...formData, targetAmount: formatted })
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="input-label">Fecha límite (Opcional)</label>
+              <input
+                type="date"
+                className="input"
+                min={new Date().toLocaleDateString('en-CA')}
+                value={formData.deadline}
+                onChange={e => setFormData({ ...formData, deadline: e.target.value })}
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="input-label">Emoji / Icono</label>
+                <input
+                  className="input text-center text-xl"
+                  value={formData.icon}
+                  maxLength={2}
+                  onChange={e => setFormData({ ...formData, icon: e.target.value })}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="input-label">Color</label>
+                <input
+                  type="color"
+                  className="input p-1 h-[42px]"
+                  value={formData.color}
+                  onChange={e => setFormData({ ...formData, color: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {goalToEdit && (
+              <div>
+                <label className="input-label">Estado</label>
+                <select
+                  className="input"
+                  value={formData.status}
+                  onChange={e => setFormData({ ...formData, status: e.target.value as Goal['status'] })}
+                >
+                  <option value="active">Activa</option>
+                  <option value="paused">Pausada</option>
+                  <option value="completed">Completada</option>
+                  <option value="cancelled">Cancelada</option>
+                </select>
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-white/10 flex justify-end gap-3">
+              <button type="button" onClick={onClose} className="btn-secondary">
+                Cancelar
+              </button>
+              <button type="submit" disabled={loading} className="btn-primary">
+                {loading ? 'Guardando...' : 'Guardar Meta'}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
