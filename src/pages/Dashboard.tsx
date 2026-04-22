@@ -181,10 +181,10 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        {statCards.map(({ id, label, value, realValue, icon: Icon, color, bg, border, style, isProjected, className }: any) => (
-          <div key={id} id={id} className={`card p-5 border ${border} ${className || ''} space-y-3 relative overflow-hidden group`}>
+        {statCards.map(({ id, label, info, value, realValue, icon: Icon, color, bg, border, style, isProjected, className }: any) => (
+          <div key={id} id={id} className={`card p-5 border ${border} ${className || ''} space-y-3 relative group`}>
             {isProjected && (
-              <div className="absolute top-0 right-0 px-2 py-0.5 bg-yellow-500 text-slate-900 text-[8px] font-black uppercase tracking-tighter rounded-bl-lg">
+              <div className="absolute top-0 right-0 px-2 py-0.5 bg-yellow-500 text-slate-900 text-[8px] font-black uppercase tracking-tighter rounded-bl-lg z-10">
                 Proyectado
               </div>
             )}
