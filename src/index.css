@@ -167,9 +167,16 @@
     background: rgba(255, 255, 255, 0.2);
   }
 
-  /* Prevent body scroll when modal is open if needed, though we handle it in modals */
+  /* Prevent body scroll when modal is open - iOS Compatible */
   .no-scroll {
-    overflow: hidden;
+    overflow: hidden !important;
+    height: 100vh !important;
+    width: 100% !important;
+    position: fixed !important;
+  }
+
+  .lock-scroll {
+    overflow: hidden !important;
   }
 
   /* Wave Animations */

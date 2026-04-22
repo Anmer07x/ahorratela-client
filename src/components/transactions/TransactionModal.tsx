@@ -59,15 +59,21 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
     onClose()
   }
 
-  // Bloquear scroll de la página cuando el modal está abierto
+  // Bloquear scroll de la página cuando el modal está abierto - iOS Fix
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      const scrollY = window.scrollY;
+      document.body.style.top = `-${scrollY}px`;
+      document.body.classList.add('no-scroll');
     } else {
-      document.body.style.overflow = 'unset';
+      const scrollY = document.body.style.top;
+      document.body.classList.remove('no-scroll');
+      document.body.style.top = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('no-scroll');
+      document.body.style.top = '';
     };
   }, [isOpen]);
 
@@ -257,7 +263,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
                 <div className="space-y-2">
                   <label className="input-label">Monto (COP)</label>
                   <input
@@ -275,7 +281,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5 sm:space-y-2">
                   <label className="input-label">
                     {formData.type === 'expense' ? '¿En qué te lo gastaste?' : 'Descripción'}
                   </label>

@@ -24,15 +24,21 @@ export default function ConfirmModal({
   variant = 'brand',
   loading = false
 }: ConfirmModalProps) {
-  // Bloquear scroll de la página cuando el modal está abierto
+  // Bloquear scroll de la página cuando el modal está abierto - iOS Fix
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      const scrollY = window.scrollY;
+      document.body.style.top = `-${scrollY}px`;
+      document.body.classList.add('no-scroll');
     } else {
-      document.body.style.overflow = 'unset';
+      const scrollY = document.body.style.top;
+      document.body.classList.remove('no-scroll');
+      document.body.style.top = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('no-scroll');
+      document.body.style.top = '';
     };
   }, [isOpen]);
 
