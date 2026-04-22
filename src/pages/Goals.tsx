@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Target, Plus, Search, Edit2, Trash2, Lightbulb, TrendingUp, Clock } from 'lucide-react'
 import { useGoalsStore, type Goal } from '../store/goalsStore'
 import { formatCurrency } from '../utils/format'
