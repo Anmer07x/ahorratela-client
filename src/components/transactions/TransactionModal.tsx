@@ -183,17 +183,17 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
   const activeGoals = goals.filter(g => g.status === 'active')
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto overflow-x-hidden">
-      <div className="relative bg-surface-950 w-full max-w-md rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[90vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/90 backdrop-blur-md animate-fade-in overflow-y-auto no-scrollbar">
+      <div className="relative bg-surface-950 w-full max-w-[calc(100vw-1.5rem)] sm:max-w-md rounded-3xl shadow-2xl border border-white/5 animate-scale-up h-auto max-h-[92vh] flex flex-col overflow-hidden">
         {/* Botón Cerrar - Fijo a la tarjeta */}
         <button 
           onClick={handleClose} 
-          className="absolute right-4 top-4 text-slate-400 hover:text-white z-50 p-2 hover:bg-white/5 rounded-full transition-all"
+          className="absolute right-3 top-3 text-slate-500 hover:text-white z-50 p-2 hover:bg-white/5 rounded-full transition-all"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="p-4 sm:p-6 overflow-y-auto no-scrollbar flex-1">
+        <div className="p-5 sm:p-7 overflow-y-auto no-scrollbar flex-1">
         
           {showSuccess ? (
             <div className="py-6 flex flex-col items-center text-center space-y-4 animate-fade-in">
@@ -218,7 +218,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
             </div>
           ) : (
             <>
-              <h3 className="text-lg font-bold flex items-center gap-2 mb-4 text-white">
+              <h3 className="text-lg font-bold flex items-center gap-2 mb-4 text-white pr-8">
                 <ArrowLeftRight className="text-brand-400 w-5 h-5" />
                 Registrar Movimiento
               </h3>
