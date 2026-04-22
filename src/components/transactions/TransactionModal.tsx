@@ -10,7 +10,7 @@ interface TransactionModalProps {
 }
 
 export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
-  const { summary, createTransaction } = useTransactionsStore()
+  const { summary, createTransaction, fetchSummary } = useTransactionsStore()
   const { goals, fetchGoals } = useGoalsStore()
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
