@@ -167,12 +167,20 @@
     background: rgba(255, 255, 255, 0.2);
   }
 
-  /* Prevent body scroll when modal is open - iOS Compatible */
   .no-scroll {
     overflow: hidden !important;
     height: 100vh !important;
     width: 100% !important;
     position: fixed !important;
+  }
+
+  /* Ocultar barra de desplazamiento */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
 
   .lock-scroll {

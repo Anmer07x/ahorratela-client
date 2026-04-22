@@ -183,21 +183,26 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
   const activeGoals = goals.filter(g => g.status === 'active')
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto overflow-x-hidden">
-      <div className="bg-surface-950 w-full max-w-md rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[95vh] flex flex-col mx-2 sm:mx-0">
-        <div className="p-4 sm:p-8 overflow-y-auto custom-scrollbar">
-        <button onClick={handleClose} className="absolute right-6 top-6 text-slate-400 hover:text-white z-20">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto overflow-x-hidden">
+      <div className="relative bg-surface-950 w-full max-w-md rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[90vh] flex flex-col overflow-hidden">
+        {/* Botón Cerrar - Fijo a la tarjeta */}
+        <button 
+          onClick={handleClose} 
+          className="absolute right-4 top-4 text-slate-400 hover:text-white z-50 p-2 hover:bg-white/5 rounded-full transition-all"
+        >
           <X className="w-5 h-5" />
         </button>
+
+        <div className="p-4 sm:p-6 overflow-y-auto no-scrollbar flex-1">
         
           {showSuccess ? (
-            <div className="py-10 flex flex-col items-center text-center space-y-6 animate-fade-in">
-              <div className="w-20 h-20 rounded-full bg-brand-500/10 flex items-center justify-center border border-brand-500/20 shadow-glow-green">
-                <CheckCircle2 className="w-10 h-10 text-brand-400 animate-bounce-short" />
+            <div className="py-6 flex flex-col items-center text-center space-y-4 animate-fade-in">
+              <div className="w-16 h-16 rounded-full bg-brand-500/10 flex items-center justify-center border border-brand-500/20 shadow-glow-green">
+                <CheckCircle2 className="w-8 h-8 text-brand-400 animate-bounce-short" />
               </div>
               <div>
-                <h4 className="text-2xl font-bold text-white mb-2">¡Movimiento Guardado!</h4>
-                <p className="text-slate-400">Tu registro se ha procesado exitosamente en el sistema.</p>
+                <h4 className="text-xl font-bold text-white mb-1">¡Movimiento Guardado!</h4>
+                <p className="text-sm text-slate-400">Procesado exitosamente.</p>
               </div>
               <div className="flex flex-col w-full gap-3 pt-4">
                 <button onClick={handleClose} className="btn-primary w-full py-4 text-base">
@@ -213,8 +218,8 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
             </div>
           ) : (
             <>
-              <h3 className="text-xl font-bold flex items-center gap-2 mb-6 text-white">
-                <ArrowLeftRight className="text-brand-400" />
+              <h3 className="text-lg font-bold flex items-center gap-2 mb-4 text-white">
+                <ArrowLeftRight className="text-brand-400 w-5 h-5" />
                 Registrar Movimiento
               </h3>
 
@@ -249,17 +254,17 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                 ))}
               </div>
 
-              {/* Tipo Info Box con más espacio y mejor diseño */}
-              <div className="mt-6 mb-8 bg-brand-500/[0.03] border border-brand-500/10 rounded-2xl p-4 flex gap-4 items-start animate-fade-in shadow-inner">
-                <div className={`p-2 rounded-xl bg-surface-900 border border-white/5 shadow-sm ${
+              {/* Tipo Info Box comprimido */}
+              <div className="mt-4 mb-6 bg-brand-500/[0.03] border border-brand-500/10 rounded-xl p-3 flex gap-3 items-start animate-fade-in shadow-inner">
+                <div className={`p-1.5 rounded-lg bg-surface-900 border border-white/5 ${
                   formData.type === 'income' ? 'text-green-400' : 
                   formData.type === 'expense' ? 'text-red-400' : 'text-blue-400'
                 }`}>
-                  <Info className="w-4 h-4" />
+                  <Info className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-300 font-bold mb-0.5">{typeDescriptions[formData.type].desc}</p>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-tight">{typeDescriptions[formData.type].impact}</p>
+                  <p className="text-[11px] text-slate-300 font-bold leading-tight">{typeDescriptions[formData.type].desc}</p>
+                  <p className="text-[9px] text-slate-500 uppercase tracking-tight">{typeDescriptions[formData.type].impact}</p>
                 </div>
               </div>
 

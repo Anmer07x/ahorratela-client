@@ -83,19 +83,24 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
   }
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto overflow-x-hidden ${isOpen ? '' : 'hidden'}`}>
-      <div className="bg-surface-950 w-full max-w-md rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[95vh] flex flex-col mx-2 sm:mx-0">
-        <div className="p-4 sm:p-8 overflow-y-auto custom-scrollbar relative">
-          <button onClick={onClose} className="absolute right-6 top-6 text-slate-400 hover:text-white z-20">
-            <X className="w-5 h-5" />
-          </button>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto overflow-x-hidden ${isOpen ? '' : 'hidden'}`}>
+      <div className="relative bg-surface-950 w-full max-w-md rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[90vh] flex flex-col overflow-hidden">
+        {/* Botón Cerrar - Fijo a la tarjeta */}
+        <button 
+          onClick={onClose} 
+          className="absolute right-4 top-4 text-slate-400 hover:text-white z-50 p-2 hover:bg-white/5 rounded-full transition-all"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-          <h3 className="text-xl font-bold flex items-center gap-2 mb-6">
-            <Target className="text-brand-400" />
+        <div className="p-4 sm:p-6 overflow-y-auto no-scrollbar flex-1">
+
+          <h3 className="text-lg font-bold flex items-center gap-2 mb-4 text-white">
+            <Target className="text-brand-400 w-5 h-5" />
             {goalToEdit ? 'Editar Meta' : 'Nueva Meta'}
           </h3>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div>
               <label className="input-label">Nombre de la meta</label>
               <input
@@ -171,11 +176,11 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
               </div>
             )}
 
-            <div className="pt-4 border-t border-white/10 flex justify-end gap-3">
-              <button type="button" onClick={onClose} className="btn-secondary">
+            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-3">
+              <button type="button" onClick={onClose} className="btn-secondary flex-1 h-11 order-2 sm:order-1 text-sm">
                 Cancelar
               </button>
-              <button type="submit" disabled={loading} className="btn-primary">
+              <button type="submit" disabled={loading} className="btn-primary flex-1 h-11 order-1 sm:order-2 text-sm">
                 {loading ? 'Guardando...' : 'Guardar Meta'}
               </button>
             </div>
