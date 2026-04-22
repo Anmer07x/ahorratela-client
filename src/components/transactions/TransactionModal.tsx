@@ -166,8 +166,8 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto overflow-x-hidden">
-      <div className="bg-surface-950 w-full max-w-lg rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[95vh] flex flex-col">
-        <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar">
+      <div className="bg-surface-950 w-full max-w-md rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[95vh] flex flex-col mx-2 sm:mx-0">
+        <div className="p-4 sm:p-8 overflow-y-auto custom-scrollbar">
         <button onClick={handleClose} className="absolute right-6 top-6 text-slate-400 hover:text-white z-20">
           <X className="w-5 h-5" />
         </button>
