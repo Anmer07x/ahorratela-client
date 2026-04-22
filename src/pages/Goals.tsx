@@ -256,7 +256,7 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
                 </div>
               </div>
             </div>
-          ) : goal.deadline ? (
+          ) : advice === null && goal.deadline && remaining_amount > 0 ? (
             <p className="text-yellow-500/80 flex items-center gap-1">
               ⚠️ La fecha límite ya pasó. Considera actualizar tu meta.
             </p>

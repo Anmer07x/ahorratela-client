@@ -47,7 +47,7 @@ export const useGoalsStore = create<GoalsState>((set) => ({
   createGoal: async (data) => {
     const res = await api.post('/goals', data)
     const goal = res.data.data
-    set((state) => ({ goals: [goal, ...state.goals] }))
+    await useGoalsStore.getState().fetchGoals()
     return goal
   },
 
