@@ -162,10 +162,9 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
   const activeGoals = goals.filter(g => g.status === 'active')
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose} />
-      
-      <div className="bg-surface-800 rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto relative z-10 shadow-2xl border border-white/10 animate-slide-up scrollbar-hide">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto">
+      <div className="bg-surface-950 w-full max-w-lg rounded-3xl shadow-2xl border border-white/5 animate-scale-up my-auto max-h-[95vh] flex flex-col">
+        <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar">
         <button onClick={handleClose} className="absolute right-6 top-6 text-slate-400 hover:text-white z-20">
           <X className="w-5 h-5" />
         </button>
