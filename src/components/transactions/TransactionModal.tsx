@@ -59,6 +59,18 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
     onClose()
   }
 
+  // Bloquear scroll de la página cuando el modal está abierto
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   const rawAmount = Number(formData.amount.replace(/\D/g, '') || 0)
   const splitSavingAmount = Math.round((rawAmount * splitPercent) / 100)
 

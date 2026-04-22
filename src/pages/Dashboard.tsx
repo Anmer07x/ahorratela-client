@@ -159,17 +159,17 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center bg-surface-800 rounded-xl p-1 border border-white/5">
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="flex flex-1 md:flex-none bg-surface-800 rounded-xl p-1 border border-white/5">
             <button
               onClick={() => setShowProjected(false)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!showProjected ? 'bg-brand-500 text-white shadow-glow-green' : 'text-slate-500 hover:text-slate-300'}`}
+              className={`flex-1 md:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!showProjected ? 'bg-brand-500 text-white shadow-glow-green' : 'text-slate-500 hover:text-slate-300'}`}
             >
               REAL
             </button>
             <button
               onClick={() => setShowProjected(true)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all ${showProjected ? 'bg-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'text-slate-500 hover:text-slate-300'}`}
+              className={`flex-1 md:flex-none px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${showProjected ? 'bg-yellow-500 text-slate-900 shadow-[0_0_15px_rgba(234,179,8,0.3)]' : 'text-slate-500 hover:text-slate-300'}`}
             >
               <CalendarClock className="w-3 h-3" />
               SUPOSICIONES
@@ -182,9 +182,9 @@ export default function Dashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
         {statCards.map(({ id, label, info, value, realValue, icon: Icon, color, bg, border, style, isProjected, className }: any) => (
-          <div key={id} id={id} className={`card p-5 border ${border} ${className || ''} space-y-3 relative group`}>
+          <div key={id} id={id} className={`card p-4 sm:p-5 border ${border} ${className || ''} space-y-2 sm:space-y-3 relative group`}>
             {isProjected && (
               <div className="absolute top-0 right-0 px-2 py-0.5 bg-yellow-500 text-slate-900 text-[8px] font-black uppercase tracking-tighter rounded-bl-lg z-10">
                 Proyectado
@@ -207,7 +207,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="space-y-1">
-              <p className={`text-xl font-bold ${color}`} style={style}>{value}</p>
+              <p className={`text-lg sm:text-xl font-bold ${color} break-words`} style={style}>{value}</p>
               {realValue && (
                 <p className="text-[10px] text-slate-500 font-medium">
                   Real: <span className="text-slate-400">{realValue}</span>

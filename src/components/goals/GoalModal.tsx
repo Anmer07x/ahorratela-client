@@ -12,6 +12,18 @@ interface GoalModalProps {
 export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProps) {
   const { createGoal, updateGoal } = useGoalsStore()
   const [loading, setLoading] = useState(false)
+
+  // Bloquear scroll de la página cuando el modal está abierto
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
   const [formData, setFormData] = useState({
     name: '',
     targetAmount: '',

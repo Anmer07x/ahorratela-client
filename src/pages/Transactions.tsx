@@ -77,12 +77,12 @@ export default function Transactions() {
         </button>
       </div>
 
-      <div className="flex bg-surface-800 p-1 rounded-xl w-full md:w-max">
+      <div className="flex flex-col sm:flex-row bg-surface-800 p-1 rounded-xl w-full md:w-max gap-1">
         {['all', 'income', 'expense', 'saving'].map(type => (
           <button
             key={type}
             onClick={() => setFilterType(type)}
-            className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               filterType === type ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
