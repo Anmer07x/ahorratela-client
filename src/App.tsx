@@ -13,6 +13,7 @@ import Transactions from './pages/Transactions'
 import WeeklyReport from './pages/WeeklyReport'
 import MonthlyReport from './pages/MonthlyReport'
 import Settings from './pages/Settings'
+import Loans from './pages/Loans'
 
 // Route Guard
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -91,6 +92,7 @@ function App() {
             <Route path="/weekly" element={<WeeklyReport />} />
             <Route path="/monthly" element={<MonthlyReport />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/loans" element={<Loans />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

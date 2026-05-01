@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Target, ArrowLeftRight, BarChart2,
-  Settings, LogOut, ChevronRight, User, ExternalLink, Power, CalendarDays
+  Settings, LogOut, ChevronRight, User, ExternalLink, Power, CalendarDays, HandCoins
 } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
 import api from '../../lib/api'
@@ -13,6 +13,7 @@ const navItems = [
   { to: '/transactions', icon: ArrowLeftRight, label: 'Movimientos' },
   { to: '/weekly', icon: BarChart2, label: 'Control semanal' },
   { to: '/monthly', icon: CalendarDays, label: 'Mes a mes' },
+  { to: '/loans', icon: HandCoins, label: 'Préstamos' },
   { to: '/settings', icon: Settings, label: 'Configuración' },
 ]
 

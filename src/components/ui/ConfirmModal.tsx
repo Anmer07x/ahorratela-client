@@ -6,10 +6,10 @@ interface ConfirmModalProps {
   onClose: () => void
   onConfirm: () => void
   title: string
-  description: string
+  description: string | React.ReactNode
   confirmText?: string
   cancelText?: string
-  variant?: 'danger' | 'brand'
+  variant?: 'danger' | 'brand' | 'success'
   loading?: boolean
 }
 
@@ -64,7 +64,8 @@ export default function ConfirmModal({
 
         <div className="flex flex-col items-center text-center space-y-4">
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg ${
-            variant === 'danger' ? 'bg-red-500/10 text-red-400' : 'bg-brand-500/10 text-brand-400'
+            variant === 'danger' ? 'bg-red-500/10 text-red-400' : 
+            variant === 'success' ? 'bg-brand-500/10 text-brand-400' : 'bg-brand-500/10 text-brand-400'
           }`}>
             <AlertTriangle className="w-7 h-7" />
           </div>
@@ -83,6 +84,8 @@ export default function ConfirmModal({
               className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all shadow-lg active:scale-95 ${
                 variant === 'danger' 
                   ? 'bg-red-500 hover:bg-red-600 text-white shadow-red-500/20' 
+                  : variant === 'success'
+                  ? 'bg-brand-500 hover:bg-brand-600 text-white shadow-brand-500/20'
                   : 'bg-brand-500 hover:bg-brand-600 text-white shadow-brand-500/20'
               } disabled:opacity-50 disabled:pointer-events-none`}
             >

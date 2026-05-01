@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Target, ArrowLeftRight, BarChart2, Settings, CalendarDays } from 'lucide-react'
+import { LayoutDashboard, Target, ArrowLeftRight, BarChart2, Settings, CalendarDays, HandCoins } from 'lucide-react'
 import clsx from 'clsx'
 
 const items = [
@@ -8,6 +8,7 @@ const items = [
   { to: '/transactions', icon: ArrowLeftRight,   label: 'Movimientos' },
   { to: '/monthly',      icon: CalendarDays,     label: 'Mensual' },
   { to: '/weekly',       icon: BarChart2,         label: 'Semanal' },
+  { to: '/loans',        icon: HandCoins,        label: 'Préstamos' },
   { to: '/settings',     icon: Settings,          label: 'Config' },
 ]
 
