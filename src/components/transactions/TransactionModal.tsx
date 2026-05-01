@@ -3,6 +3,7 @@ import { X, ArrowLeftRight, CalendarClock, TrendingUp, TrendingDown, PiggyBank, 
 import { useTransactionsStore, type Transaction } from '../../store/transactionsStore'
 import { useGoalsStore } from '../../store/goalsStore'
 import { formatCurrency } from '../../utils/format'
+import CurrencyInput from '../ui/CurrencyInput'
 
 interface TransactionModalProps {
   isOpen: boolean
@@ -271,18 +272,12 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
               <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
                 <div className="space-y-2">
                   <label className="input-label">Monto (COP)</label>
-                  <input
-                    required
-                    type="text"
-                    inputMode="numeric"
-                    className="input text-2xl h-14"
-                    placeholder="0"
+                  <CurrencyInput
                     value={formData.amount}
-                    onChange={e => {
-                      const numericValue = e.target.value.replace(/\D/g, '')
-                      const formatted = numericValue ? Number(numericValue).toLocaleString('es-CO') : ''
-                      setFormData({ ...formData, amount: formatted })
-                    }}
+                    onChange={(raw) => setFormData({ ...formData, amount: raw })}
+                    placeholder="0"
+                    className="input text-2xl h-14"
+                    required
                   />
                 </div>
 

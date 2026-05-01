@@ -8,6 +8,8 @@ export interface Loan {
   interest_rate: number
   loan_date: string
   note?: string
+  source_type: 'external' | 'balance' | 'goal'
+  source_goal_id?: string
   created_at: string
 }
 
@@ -24,8 +26,9 @@ interface LoansState {
   error: string | null
   fetchLoans: () => Promise<void>
   fetchStats: () => Promise<void>
-  createLoan: (data: { personName: string; amount: number; interestRate: number; loanDate: string; note?: string }) => Promise<void>
+  createLoan: (data: { personName: string; amount: number; interestRate: number; loanDate: string; note?: string; sourceType?: string; sourceGoalId?: string }) => Promise<void>
   deleteLoan: (id: string) => Promise<void>
+  cancelLoan: (id: string) => Promise<void>
 }
 
 export const useLoansStore = create<LoansState>((set, get) => ({
@@ -78,6 +81,19 @@ export const useLoansStore = create<LoansState>((set, get) => ({
       await get().fetchStats()
     } catch (err) {
       console.error('Delete loan error:', err)
+      throw err
+    }
+  },
+
+  cancelLoan: async (id) => {
+    try {
+      await api.delete(`/loans/${id}/cancel`)
+      set((state) => ({
+        loans: state.loans.filter((l) => l.id !== id)
+      }))
+      await get().fetchStats()
+    } catch (err) {
+      console.error('Cancel loan error:', err)
       throw err
     }
   }

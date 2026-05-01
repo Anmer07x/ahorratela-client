@@ -6,9 +6,10 @@ import { formatCurrency } from '../utils/format'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import ConfirmModal from '../components/ui/ConfirmModal'
+import CurrencyInput from '../components/ui/CurrencyInput'
 
 export default function Loans() {
-  const { loans, stats, isLoading, fetchLoans, fetchStats, createLoan, deleteLoan } = useLoansStore()
+  const { loans, stats, isLoading, fetchLoans, fetchStats, createLoan, deleteLoan, cancelLoan } = useLoansStore()
   const { goals, fetchGoals } = useGoalsStore()
   
   // Form State
@@ -30,6 +31,11 @@ export default function Loans() {
     id: null,
     name: '',
     total: 0
+  })
+  const [cancelModal, setCancelModal] = useState<{ isOpen: boolean; id: string | null; name: string }>({
+    isOpen: false,
+    id: null,
+    name: ''
   })
 
   useEffect(() => {
@@ -89,6 +95,22 @@ export default function Loans() {
       await deleteLoan(deleteModal.id)
       setDeleteModal({ ...deleteModal, isOpen: false })
       setToastMsg('¡Deuda pagada y saldos actualizados!')
+      setTimeout(() => setToastMsg(null), 3000)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const openCancelConfirm = (loan: any) => {
+    setCancelModal({ isOpen: true, id: loan.id, name: loan.person_name })
+  }
+
+  const handleCancel = async () => {
+    if (!cancelModal.id) return
+    try {
+      await cancelLoan(cancelModal.id)
+      setCancelModal({ ...cancelModal, isOpen: false })
+      setToastMsg('Préstamo eliminado correctamente')
       setTimeout(() => setToastMsg(null), 3000)
     } catch (err) {
       console.error(err)
@@ -190,11 +212,10 @@ export default function Loans() {
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
                       <DollarSign className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
                     </div>
-                    <input
-                      type="number"
+                    <CurrencyInput
                       name="amount"
                       value={formData.amount}
-                      onChange={handleInputChange}
+                      onChange={(raw) => setFormData(prev => ({ ...prev, amount: raw }))}
                       placeholder="0"
                       className="input pl-14 h-12 bg-surface-900/50 border-white/5 hover:border-white/10"
                       required
@@ -396,13 +417,28 @@ export default function Loans() {
                         </div>
                       </div>
                       
-                      <button 
-                        onClick={() => openDeleteConfirm(loan)}
-                        className="p-2.5 rounded-xl bg-brand-500/10 text-brand-400 hover:bg-brand-500 hover:text-white transition-all shadow-glow-green/10"
-                        title="Marcar como pagado"
-                      >
-                        <CheckCircle2 className="w-5 h-5" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        {/* Info about button actions */}
+                        <div className="hidden group-hover:flex items-center gap-1 text-[10px] text-slate-500 bg-surface-900/80 px-2 py-1 rounded-lg border border-white/5 animate-fade-in whitespace-nowrap">
+                          <CheckCircle2 className="w-3 h-3 text-brand-400" /> Cobrar
+                          <span className="mx-1 text-white/10">|</span>
+                          <Trash2 className="w-3 h-3 text-red-400" /> Eliminar
+                        </div>
+                        <button 
+                          onClick={() => openDeleteConfirm(loan)}
+                          className="p-2.5 rounded-xl bg-brand-500/10 text-brand-400 hover:bg-brand-500 hover:text-white transition-all shadow-glow-green/10"
+                          title="Marcar como pagado — actualiza tus saldos automáticamente"
+                        >
+                          <CheckCircle2 className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => openCancelConfirm(loan)}
+                          className="p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all"
+                          title="Eliminar registro — no afecta tus saldos"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 mt-6">
@@ -454,6 +490,28 @@ export default function Loans() {
         }
         confirmText="Confirmar Pago"
         variant="success"
+      />
+
+      {/* Cancel / Delete Modal */}
+      <ConfirmModal
+        isOpen={cancelModal.isOpen}
+        onClose={() => setCancelModal({ ...cancelModal, isOpen: false })}
+        onConfirm={handleCancel}
+        title="¿Eliminar este préstamo?"
+        description={
+          <div className="space-y-3 mt-2">
+            <p>Vas a eliminar el registro del préstamo a <span className="font-bold text-white">{cancelModal.name}</span>.</p>
+            <div className="bg-red-500/10 p-3 rounded-2xl border border-red-500/20 flex items-start gap-2">
+              <Info className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+              <p className="text-xs text-red-300">
+                <strong>Solo elimina el registro.</strong> No devolverá dinero a tus saldos ni metas. 
+                Úsalo si registraste el préstamo por error.
+              </p>
+            </div>
+          </div>
+        }
+        confirmText="Sí, eliminar"
+        variant="danger"
       />
     </div>
   )

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-
 import { type Goal, useGoalsStore } from '../../store/goalsStore'
 import { X, Target } from 'lucide-react'
+import CurrencyInput from '../ui/CurrencyInput'
 
 interface GoalModalProps {
   isOpen: boolean
@@ -114,17 +114,12 @@ export default function GoalModal({ isOpen, onClose, goalToEdit }: GoalModalProp
 
             <div>
               <label className="input-label">Monto objetivo (COP)</label>
-              <input
-                required
-                type="text"
-                className="input"
-                placeholder="0"
+              <CurrencyInput
                 value={formData.targetAmount}
-                onChange={e => {
-                  const numericValue = e.target.value.replace(/\D/g, '')
-                  const formatted = numericValue ? Number(numericValue).toLocaleString('es-CO') : ''
-                  setFormData({ ...formData, targetAmount: formatted })
-                }}
+                onChange={(raw) => setFormData({ ...formData, targetAmount: raw })}
+                placeholder="0"
+                className="input"
+                required
               />
             </div>
 
