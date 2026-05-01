@@ -248,16 +248,18 @@ export default function Login() {
           </div>
           
           <div className="flex justify-center w-full mt-4">
-            <div className="w-full max-w-[280px] overflow-hidden rounded-full" style={{ colorScheme: 'dark' }}>
-              <GoogleLogin
-                onSuccess={res => { if (res.credential) handleGoogleLogin(res.credential) }}
-                onError={() => setError('Conexión anulada')}
-                theme="filled_black"
-                shape="pill"
-                size="large"
-                locale="es"
-                width="280px"
-              />
+            <div className="w-[280px] h-[44px] overflow-hidden rounded-full bg-[#131314] flex items-center justify-center" style={{ colorScheme: 'dark' }}>
+              <div className="scale-[1.02]">
+                <GoogleLogin
+                  onSuccess={res => { if (res.credential) handleGoogleLogin(res.credential) }}
+                  onError={() => setError('Conexión anulada')}
+                  theme="filled_black"
+                  shape="pill"
+                  size="large"
+                  locale="es"
+                  width="280px"
+                />
+              </div>
             </div>
           </div>
 
