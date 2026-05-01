@@ -96,7 +96,7 @@ export default function MonthlyReport() {
       <div className="card p-6 min-h-[400px]">
         <h3 className="section-title mb-6">Gráfico Mensual</h3>
         {chartData.length > 0 ? (
-          <div className="h-80">
+          <div className="h-80 w-full min-h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <XAxis dataKey="name" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} />
