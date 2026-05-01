@@ -38,6 +38,11 @@ export default function Login() {
         navigate('/dashboard')
       }
     } catch (err: any) {
+      const techErr = err.response?.data?.technicalError
+      console.group('❌ Error de Autenticación con Google')
+      console.error('Mensaje:', err.response?.data?.message)
+      if (techErr) console.error('Detalle Técnico:', techErr)
+      console.groupEnd()
       setError(err.response?.data?.message || 'Error al iniciar sesión con Google')
     } finally {
       setIsLoading(false)
