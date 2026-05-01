@@ -231,24 +231,21 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                 </div>
               )}
 
-              <div className="flex bg-surface-900/60 rounded-xl p-1">
+              <div className="flex bg-surface-900/60 rounded-xl p-1 border border-white/5">
                 {[
-                  { id: 'expense', label: 'Gasto', color: 'red' },
-                  { id: 'income', label: 'Ingreso', color: 'brand' },
-                  { id: 'saving', label: 'Ahorro', color: 'blue' }
+                  { id: 'expense', label: 'Gasto', activeClass: 'bg-red-500 text-white shadow-lg shadow-red-500/20' },
+                  { id: 'income', label: 'Ingreso', activeClass: 'bg-brand-500 text-white shadow-lg shadow-brand-500/20' },
+                  { id: 'saving', label: 'Ahorro', activeClass: 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' }
                 ].map(type => (
                   <button
                     key={type.id}
                     type="button"
                     onClick={() => setFormData({ ...formData, type: type.id as any })}
-                    className={`flex-1 py-1.5 rounded-lg text-sm font-bold transition-all ${
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${
                       formData.type === type.id 
-                        ? `bg-${type.color}-500 text-white shadow-lg` 
-                        : 'text-slate-400 hover:text-slate-100'
+                        ? type.activeClass
+                        : 'text-slate-500 hover:text-slate-300'
                     }`}
-                    style={{
-                      backgroundColor: formData.type === type.id ? `var(--color-${type.color === 'brand' ? 'brand-500' : type.color + '-500'})` : undefined
-                    }}
                   >
                     {type.label}
                   </button>
