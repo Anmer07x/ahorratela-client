@@ -176,6 +176,7 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
   const current_amount = Number(goal.current_amount) || 0
   const target_amount = Number(goal.target_amount) || 0
   const remaining_amount = Number(goal.remaining_amount) || 0
+  const progress_percentage = Number(goal.progress_percentage) || 0
   const isCompleted = current_amount >= target_amount
   const excess = current_amount > target_amount ? current_amount - target_amount : 0
   const pct = Math.min(100, progress_percentage)
