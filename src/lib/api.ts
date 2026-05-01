@@ -27,19 +27,26 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = []
 }
 
+// URLs that should NOT trigger a token refresh attempt
+const AUTH_URLS = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/google']
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
 
-    if (error.response?.status === 401 && error.response?.data?.code === 'TOKEN_EXPIRED' && !originalRequest._retry) {
+    // Skip refresh logic for auth endpoints or already-retried requests
+    const isAuthEndpoint = AUTH_URLS.some(url => originalRequest?.url?.includes(url))
+    const is401 = error.response?.status === 401
+
+    if (is401 && !originalRequest._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
         }).then(token => {
           originalRequest.headers.Authorization = `Bearer ${token}`
           return api(originalRequest)
-        })
+        }).catch(err => Promise.reject(err))
       }
 
       originalRequest._retry = true
@@ -47,6 +54,7 @@ api.interceptors.response.use(
 
       const refreshToken = useAuthStore.getState().refreshToken
       if (!refreshToken) {
+        isRefreshing = false
         useAuthStore.getState().logout()
         return Promise.reject(error)
       }
@@ -60,13 +68,7 @@ api.interceptors.response.use(
         return api(originalRequest)
       } catch (refreshError: any) {
         processQueue(refreshError, null)
-        
-        // Only logout if the server explicitly rejects the refresh token (401/403)
-        // If it's a network error (e.g. 503 or timeout), don't kick the user yet
-        if (refreshError.response?.status === 401 || refreshError.response?.status === 403) {
-          useAuthStore.getState().logout()
-        }
-        
+        useAuthStore.getState().logout()
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false
