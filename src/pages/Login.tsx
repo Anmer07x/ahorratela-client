@@ -38,12 +38,22 @@ export default function Login() {
         navigate('/dashboard')
       }
     } catch (err: any) {
-      const techErr = err.response?.data?.technicalError
       console.group('❌ Error de Autenticación con Google')
-      console.error('Mensaje:', err.response?.data?.message)
-      if (techErr) console.error('Detalle Técnico:', techErr)
+      if (err.response) {
+        console.error('Error del Servidor:', err.response.data.message)
+        if (err.response.data.technicalError) {
+          console.error('Detalle Técnico:', err.response.data.technicalError)
+        }
+      } else if (err.request) {
+        console.error('No se recibió respuesta del servidor. Posible problema de red o CORS.')
+        console.error('Request:', err.request)
+      } else {
+        console.error('Error al configurar la petición:', err.message)
+      }
       console.groupEnd()
-      setError(err.response?.data?.message || 'Error al iniciar sesión con Google')
+      
+      const errorMsg = err.response?.data?.message || 'Error de conexión con el servidor'
+      setError(errorMsg)
     } finally {
       setIsLoading(false)
       setLoading(false)
