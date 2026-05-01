@@ -38,20 +38,6 @@ export default function Login() {
         navigate('/dashboard')
       }
     } catch (err: any) {
-      console.group('❌ Error de Autenticación con Google')
-      if (err.response) {
-        console.error('Error del Servidor:', err.response.data.message)
-        if (err.response.data.technicalError) {
-          console.error('Detalle Técnico:', err.response.data.technicalError)
-        }
-      } else if (err.request) {
-        console.error('No se recibió respuesta del servidor. Posible problema de red o CORS.')
-        console.error('Request:', err.request)
-      } else {
-        console.error('Error al configurar la petición:', err.message)
-      }
-      console.groupEnd()
-      
       const errorMsg = err.response?.data?.message || 'Error de conexión con el servidor'
       setError(errorMsg)
     } finally {

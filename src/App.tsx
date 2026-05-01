@@ -53,10 +53,10 @@ function App() {
         }
       } catch (err) {
         console.error('Initial auth check failed:', err)
-        // Force logout if check fails to clear stale tokens
         logout()
       } finally {
-        setInitializing(false)
+        // Asegurar que la pantalla profesional sea visible por el tiempo deseado
+        setTimeout(() => setInitializing(false), 5000)
       }
     }
 
