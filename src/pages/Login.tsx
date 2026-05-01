@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Lock, Mail, User, ArrowRight, Loader2, ShieldCheck } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
-import { GoogleLogin } from '@react-oauth/google'
+import { useGoogleLogin } from '@react-oauth/google'
 import api from '../lib/api'
 import TermsModal from '../components/legal/TermsModal'
 
@@ -22,7 +22,12 @@ export default function Login() {
   const searchParams = new URLSearchParams(window.location.search)
   const isLocked = searchParams.get('exit') === 'true'
 
-  const handleGoogleLogin = async (credential: string) => {
+  const login = useGoogleLogin({
+    onSuccess: tokenResponse => handleGoogleLogin(tokenResponse.access_token),
+    onError: () => setError('Conexión anulada'),
+  })
+
+  const handleGoogleLogin = async (token: string) => {
     setIsLoading(true)
     setLoading(true)
     setError('')
@@ -248,17 +253,22 @@ export default function Login() {
           </div>
           
           <div className="flex justify-center w-full mt-4">
-            <div className="w-[280px] h-[44px] overflow-hidden rounded-full bg-surface-900 border border-white/5 flex items-center justify-center">
-              <GoogleLogin
-                onSuccess={res => { if (res.credential) handleGoogleLogin(res.credential) }}
-                onError={() => setError('Conexión anulada')}
-                theme="outline"
-                shape="pill"
-                size="large"
-                locale="es"
-                width="280px"
-              />
-            </div>
+            <button
+              type="button"
+              onClick={() => login()}
+              className="w-full max-w-[320px] h-12 bg-white text-slate-900 rounded-xl flex items-center justify-center gap-3 transition-all hover:bg-slate-100 active:scale-[0.98] shadow-lg relative overflow-hidden group"
+            >
+              <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                <svg width="20" height="20" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+                  <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+                  <path d="M3.964 10.706c-.18-.54-.282-1.117-.282-1.706 0-.589.102-1.166.282-1.706V4.962H.957C.347 6.177 0 7.548 0 9s.347 2.823.957 4.038l3.007-2.332z" fill="#FBBC05"/>
+                  <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.443 2.049.957 4.962l3.007 2.332c.708-2.127 2.692-3.714 5.036-3.714z" fill="#EA4335"/>
+                </svg>
+              </div>
+              <span className="text-sm font-bold tracking-tight">Continuar con Google</span>
+              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
           </div>
 
           <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-3 flex items-start gap-3 mt-4 animate-fade-in">
