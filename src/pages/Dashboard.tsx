@@ -301,15 +301,23 @@ export default function Dashboard() {
               const displayTarget = Number(goal.target_amount)
               const pct = Math.min(100, (displayCurrent / displayTarget) * 100)
               const isImproved = showProjected && (projectedAmount > Number(goal.current_amount))
+              const isCompleted = displayCurrent >= displayTarget
+              const excess = displayCurrent > displayTarget ? displayCurrent - displayTarget : 0
 
               return (
                 <Link
                   key={goal.id}
                   to={`/goals/${goal.id}`}
-                  className={`card-hover p-5 block space-y-4 relative overflow-hidden ${isImproved ? 'border-yellow-500/20 bg-yellow-500/[0.02]' : ''
-                    }`}
+                  className={`card-hover p-5 block space-y-4 relative overflow-hidden ${
+                    isCompleted ? 'border-brand-500/30 bg-brand-500/[0.02]' : 
+                    isImproved ? 'border-yellow-500/20 bg-yellow-500/[0.02]' : ''
+                  }`}
                 >
-                  {isImproved && (
+                  {isCompleted ? (
+                    <div className="absolute top-0 right-0 px-2 py-0.5 bg-brand-500 text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg shadow-glow-green">
+                      ¡Completada!
+                    </div>
+                  ) : isImproved && (
                     <div className="absolute top-0 right-0 px-2 py-0.5 bg-yellow-500 text-slate-900 text-[8px] font-black uppercase tracking-tighter rounded-bl-lg">
                       Proyectado
                     </div>
@@ -318,24 +326,29 @@ export default function Dashboard() {
                     <div className="flex items-center gap-3">
                       <div
                         className="w-9 h-9 rounded-xl flex items-center justify-center text-base"
-                        style={{ background: `${goal.color}20` }}
+                        style={{ background: isCompleted ? '#10b98120' : `${goal.color}20` }}
                       >
-                        🎯
+                        {isCompleted ? '✅' : '🎯'}
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-100 text-sm flex items-center gap-2">
+                        <p className={`font-semibold text-sm flex items-center gap-2 ${isCompleted ? 'text-brand-400' : 'text-slate-100'}`}>
                           {goal.name}
-                          {isImproved && <CalendarClock className="w-3 h-3 text-yellow-500" />}
+                          {isImproved && !isCompleted && <CalendarClock className="w-3 h-3 text-yellow-500" />}
                         </p>
                         <p className="text-xs text-slate-500">
-                          {formatCurrency(displayCurrent)} / {formatCurrency(displayTarget)}
+                          {formatCurrency(displayCurrent)}
+                          {excess > 0 && <span className="text-brand-400 font-bold ml-1">(+{formatCurrency(excess)})</span>}
+                          <span className="mx-1">/</span>
+                          {formatCurrency(displayTarget)}
                         </p>
                       </div>
                     </div>
                     <span
-                      className={`text-sm font-bold ${isImproved ? 'text-yellow-500' :
-                          pct >= 80 ? 'text-brand-400' : pct >= 40 ? 'text-yellow-400' : 'text-slate-400'
-                        }`}
+                      className={`text-sm font-bold ${
+                        isCompleted ? 'text-brand-400' : 
+                        isImproved ? 'text-yellow-500' :
+                        pct >= 80 ? 'text-brand-400' : pct >= 40 ? 'text-yellow-400' : 'text-slate-400'
+                      }`}
                     >
                       {pct.toFixed(0)}%
                     </span>
@@ -345,19 +358,24 @@ export default function Dashboard() {
                       className="progress-fill h-full transition-all duration-500"
                       style={{
                         width: `${pct}%`,
-                        background: isImproved
+                        background: isCompleted
+                          ? '#10b981'
+                          : isImproved
                           ? 'linear-gradient(90deg, #ca8a0480, #eab308)'
-                          : pct >= 100
-                            ? '#3b82f6'
-                            : pct >= 1
-                              ? 'linear-gradient(90deg, #8EDF3E80, #8EDF3E)'
-                              : '#1e293b',
+                          : pct >= 80
+                          ? '#10b981'
+                          : pct >= 40
+                          ? '#facc15'
+                          : goal.color || '#3b82f6',
                       }}
                     />
                   </div>
                   <p className="text-xs text-slate-500">
-                    Falta {formatCurrency(Math.max(0, displayTarget - displayCurrent))}
-                    {goal.deadline && ` · Hasta ${format(parseISO(goal.deadline), 'd MMM yyyy', { locale: es })}`}
+                    {isCompleted 
+                      ? `¡Lo lograste! Exceso de ${formatCurrency(excess)}` 
+                      : `Falta ${formatCurrency(Math.max(0, displayTarget - displayCurrent))}`
+                    }
+                    {goal.deadline && !isCompleted && ` · Hasta ${format(parseISO(goal.deadline), 'd MMM yyyy', { locale: es })}`}
                   </p>
                 </Link>
               )

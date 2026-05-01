@@ -176,21 +176,29 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
   const current_amount = Number(goal.current_amount) || 0
   const target_amount = Number(goal.target_amount) || 0
   const remaining_amount = Number(goal.remaining_amount) || 0
-  const progress_percentage = Number(goal.progress_percentage) || 0
-  
+  const isCompleted = current_amount >= target_amount
+  const excess = current_amount > target_amount ? current_amount - target_amount : 0
   const pct = Math.min(100, progress_percentage)
   const advice = getSavingsAdvice(goal)
 
   return (
-    <div className="card p-5 space-y-4">
+    <div className={`card p-5 space-y-4 transition-all ${isCompleted ? 'border-brand-500/30 bg-brand-500/[0.01]' : ''}`}>
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ backgroundColor: `${goal.color}20` }}>
-            {goal.icon || '🎯'}
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl relative" style={{ backgroundColor: isCompleted ? '#10b98120' : `${goal.color}20` }}>
+            {isCompleted ? '✅' : (goal.icon || '🎯')}
+            {isCompleted && (
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-brand-500 rounded-full flex items-center justify-center border-2 border-surface-950">
+                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+              </div>
+            )}
           </div>
           <div>
-            <h4 className="font-semibold text-slate-100">{goal.name}</h4>
-            {goal.deadline && (
+            <h4 className={`font-semibold ${isCompleted ? 'text-brand-400' : 'text-slate-100'}`}>
+              {goal.name}
+              {isCompleted && <span className="ml-2 text-[10px] bg-brand-500 text-white px-1.5 py-0.5 rounded uppercase tracking-tighter">Meta Cumplida</span>}
+            </h4>
+            {goal.deadline && !isCompleted && (
               <p className="text-xs text-slate-400 flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 Hasta: {format(parseLocalDate(goal.deadline)!, 'd MMM yyyy', { locale: es })}
@@ -199,10 +207,10 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
           </div>
         </div>
         <div className="flex gap-2">
-          <button onClick={onEdit} className="p-1.5 text-slate-400 hover:text-brand-400 bg-white/5 rounded-lg hover:bg-brand-500/10 transition-colors">
+          <button onClick={onEdit} title="Editar" className="p-1.5 text-slate-400 hover:text-brand-400 bg-white/5 rounded-lg hover:bg-brand-500/10 transition-colors">
             <Edit2 className="w-4 h-4" />
           </button>
-          <button onClick={onDelete} className="p-1.5 text-slate-400 hover:text-red-400 bg-white/5 rounded-lg hover:bg-red-500/10 transition-colors">
+          <button onClick={onDelete} title="Eliminar" className="p-1.5 text-slate-400 hover:text-red-400 bg-white/5 rounded-lg hover:bg-red-500/10 transition-colors">
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -211,22 +219,29 @@ function GoalCard({ goal, onEdit, onDelete }: { goal: Goal, onEdit: () => void, 
       <div className="space-y-1">
         <div className="flex justify-between text-sm">
           <span className="text-slate-400">Progreso</span>
-          <span className="font-medium text-slate-200">
-             {formatCurrency(current_amount)} / {formatCurrency(target_amount)}
+          <span className={`font-medium ${isCompleted ? 'text-brand-400' : 'text-slate-200'}`}>
+             {formatCurrency(current_amount)}
+             {excess > 0 && <span className="text-brand-500 font-bold ml-1">(+{formatCurrency(excess)})</span>}
+             <span className="mx-1 text-slate-600">/</span>
+             {formatCurrency(target_amount)}
           </span>
         </div>
         <div className="progress-bar h-2.5">
           <div
-            className="progress-fill h-full"
+            className="progress-fill h-full shadow-glow-green"
             style={{
               width: `${pct}%`,
-              backgroundColor: pct >= 100 ? '#3b82f6' : goal.color,
+              backgroundColor: isCompleted ? '#10b981' : goal.color,
             }}
           />
         </div>
         <div className="flex justify-between text-xs text-slate-500 mt-1">
-          <span>{pct.toFixed(1)}% completado</span>
-          {pct < 100 && <span>Falta {formatCurrency(remaining_amount)}</span>}
+          <span className={isCompleted ? 'text-brand-500 font-bold' : ''}>{pct.toFixed(1)}% completado</span>
+          {isCompleted ? (
+             <span className="text-brand-500 font-medium italic">¡Objetivo superado!</span>
+          ) : (
+             <span>Falta {formatCurrency(remaining_amount)}</span>
+          )}
         </div>
       </div>
 
