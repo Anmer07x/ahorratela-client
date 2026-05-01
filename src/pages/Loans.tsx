@@ -1,27 +1,15 @@
 import { useState, useEffect } from 'react'
-import { HandCoins, User, DollarSign, Percent, Calendar, StickyNote, Plus, Trash2, CheckCircle2, Loader2, Info } from 'lucide-center'
-import { HandCoins as HandCoinsIcon, User as UserIcon, DollarSign as DollarSignIcon, Percent as PercentIcon, Calendar as CalendarIcon, StickyNote as StickyNoteIcon, Plus as PlusIcon, Trash2 as Trash2Icon, CheckCircle2 as CheckCircle2Icon, Loader2 as Loader2Icon, Info as InfoIcon } from 'lucide-react'
+import { HandCoins, User, DollarSign, Percent, Calendar, StickyNote, Plus, Trash2, CheckCircle2, Loader2, Info, Wallet, Target, Globe } from 'lucide-react'
 import { useLoansStore } from '../store/loansStore'
+import { useGoalsStore } from '../store/goalsStore'
 import { formatCurrency } from '../utils/format'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import ConfirmModal from '../components/ui/ConfirmModal'
 
-// Re-mapping icons to avoid confusion with the imports
-const HandCoins = HandCoinsIcon;
-const User = UserIcon;
-const DollarSign = DollarSignIcon;
-const Percent = PercentIcon;
-const Calendar = CalendarIcon;
-const StickyNote = StickyNoteIcon;
-const Plus = PlusIcon;
-const Trash2 = Trash2Icon;
-const CheckCircle2 = CheckCircle2Icon;
-const Loader2 = Loader2Icon;
-const Info = InfoIcon;
-
 export default function Loans() {
   const { loans, stats, isLoading, fetchLoans, fetchStats, createLoan, deleteLoan } = useLoansStore()
+  const { goals, fetchGoals } = useGoalsStore()
   
   // Form State
   const [formData, setFormData] = useState({
@@ -29,7 +17,9 @@ export default function Loans() {
     amount: '',
     interestRate: '0',
     loanDate: new Date().toISOString().split('T')[0],
-    note: ''
+    note: '',
+    sourceType: 'external',
+    sourceGoalId: ''
   })
 
   // UI State
@@ -45,9 +35,10 @@ export default function Loans() {
   useEffect(() => {
     fetchLoans()
     fetchStats()
+    fetchGoals()
   }, [])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
@@ -61,14 +52,17 @@ export default function Loans() {
       await createLoan({
         ...formData,
         amount: parseFloat(formData.amount),
-        interestRate: parseFloat(formData.interestRate)
+        interestRate: parseFloat(formData.interestRate),
+        sourceGoalId: formData.sourceType === 'goal' ? formData.sourceGoalId : undefined
       })
       setFormData({
         personName: '',
         amount: '',
         interestRate: '0',
         loanDate: new Date().toISOString().split('T')[0],
-        note: ''
+        note: '',
+        sourceType: 'external',
+        sourceGoalId: ''
       })
       setToastMsg('¡Préstamo registrado exitosamente!')
       setTimeout(() => setToastMsg(null), 3000)
@@ -94,7 +88,7 @@ export default function Loans() {
     try {
       await deleteLoan(deleteModal.id)
       setDeleteModal({ ...deleteModal, isOpen: false })
-      setToastMsg('¡Deuda marcada como pagada!')
+      setToastMsg('¡Deuda pagada y saldos actualizados!')
       setTimeout(() => setToastMsg(null), 3000)
     } catch (err) {
       console.error(err)
@@ -123,11 +117,11 @@ export default function Loans() {
           <h2 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
             <HandCoins className="text-brand-400 w-7 h-7" /> Préstamos
           </h2>
-          <p className="text-slate-400 text-sm mt-1">Gestiona deudas e intereses de forma simple</p>
+          <p className="text-slate-400 text-sm mt-1">Gestiona deudas e intereses con integración a tus ahorros</p>
         </div>
       </div>
 
-      {/* Stats Section - Revertido a columna por solicitud del usuario */}
+      {/* Stats Section */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-surface-800/60 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex items-center justify-between group hover:border-brand-500/20 transition-all">
           <div>
@@ -225,6 +219,59 @@ export default function Loans() {
                 </div>
               </div>
 
+              {/* Source Selection */}
+              <div className="space-y-3 p-4 bg-surface-900/40 rounded-2xl border border-white/5">
+                <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
+                  <Wallet className="w-3.5 h-3.5" /> ¿De dónde sale el dinero?
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'external', icon: Globe, label: 'Externo' },
+                    { id: 'balance', icon: Wallet, label: 'Balance' },
+                    { id: 'goal', icon: Target, label: 'Ahorros' },
+                  ].map(source => (
+                    <button
+                      key={source.id}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, sourceType: source.id }))}
+                      className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all ${
+                        formData.sourceType === source.id 
+                          ? 'bg-brand-500/10 border-brand-500/30 text-brand-400' 
+                          : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10'
+                      }`}
+                    >
+                      <source.icon className="w-4 h-4" />
+                      <span className="text-[10px] font-bold uppercase">{source.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {formData.sourceType === 'goal' && (
+                  <div className="animate-fade-in pt-1">
+                    <select
+                      name="sourceGoalId"
+                      value={formData.sourceGoalId}
+                      onChange={handleInputChange}
+                      className="input h-10 text-xs bg-surface-900/80"
+                      required
+                    >
+                      <option value="">Selecciona una meta...</option>
+                      {goals.filter(g => g.status === 'active').map(goal => (
+                        <option key={goal.id} value={goal.id}>
+                          {goal.name} ({formatCurrency(goal.current_amount)})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                
+                <p className="text-[10px] text-slate-500 italic mt-1">
+                  {formData.sourceType === 'balance' && "Se creará un gasto automático en tus movimientos."}
+                  {formData.sourceType === 'goal' && "Se descontará directamente de tu meta de ahorro."}
+                  {formData.sourceType === 'external' && "No afectará tus balances ni metas actuales."}
+                </p>
+              </div>
+
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase ml-1">Fecha del préstamo</label>
                 <div className="relative group">
@@ -277,7 +324,7 @@ export default function Loans() {
 
               <button 
                 type="submit" 
-                disabled={isSubmitting || !formData.personName || !formData.amount}
+                disabled={isSubmitting || !formData.personName || !formData.amount || (formData.sourceType === 'goal' && !formData.sourceGoalId)}
                 className="btn-primary w-full py-4 mt-2 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
@@ -293,7 +340,7 @@ export default function Loans() {
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <HandCoins className="w-5 h-5 text-blue-400" /> Deudas Activas
             </h3>
-            <span className="text-xs text-slate-500 font-medium">{loans.length} registros</span>
+            <span className="text-xs text-slate-500 font-medium">{loans.length} registrados</span>
           </div>
 
           {isLoading && loans.length === 0 ? (
@@ -315,6 +362,9 @@ export default function Loans() {
                 const total = parseFloat(loan.amount as any) * (1 + parseFloat(loan.interest_rate as any) / 100)
                 const interests = total - parseFloat(loan.amount as any)
                 
+                // Find goal name if it was from a goal
+                const sourceGoalName = goals.find(g => g.id === loan.source_goal_id)?.name
+
                 return (
                   <div key={loan.id} className="card p-5 hover:bg-white/[0.02] transition-all group border-l-4 border-l-brand-500/30 hover:border-l-brand-400 shadow-lg">
                     <div className="flex justify-between items-start gap-4">
@@ -335,6 +385,13 @@ export default function Loans() {
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
                             {format(parseISO(loan.loan_date), 'd MMM yyyy', { locale: es })}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            {loan.source_type === 'goal' ? <Target className="w-3 h-3 text-brand-400" /> : 
+                             loan.source_type === 'balance' ? <Wallet className="w-3 h-3 text-blue-400" /> : 
+                             <Globe className="w-3 h-3 text-slate-500" />}
+                            {loan.source_type === 'goal' ? `Meta: ${sourceGoalName || 'Cargando...'}` : 
+                             loan.source_type === 'balance' ? 'Desde Balance' : 'Externo'}
                           </span>
                         </div>
                       </div>
@@ -391,7 +448,7 @@ export default function Loans() {
               <p className="text-2xl font-black text-white">{formatCurrency(deleteModal.total)}</p>
             </div>
             <p className="text-xs text-slate-500 italic flex items-center gap-1">
-              <Info className="w-3 h-3" /> Esta acción eliminará el préstamo de la lista.
+              <Info className="w-3 h-3" /> Los fondos se reintegrarán automáticamente a tus balances o metas.
             </p>
           </div>
         }
