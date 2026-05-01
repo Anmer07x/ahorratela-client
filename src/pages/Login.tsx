@@ -248,7 +248,7 @@ export default function Login() {
           </div>
           
           <div className="flex justify-center w-full mt-4">
-            <div className="w-full overflow-hidden flex justify-center">
+            <div className="w-full max-w-[280px] overflow-hidden rounded-full" style={{ colorScheme: 'dark' }}>
               <GoogleLogin
                 onSuccess={res => { if (res.credential) handleGoogleLogin(res.credential) }}
                 onError={() => setError('Conexión anulada')}
@@ -256,6 +256,7 @@ export default function Login() {
                 shape="pill"
                 size="large"
                 locale="es"
+                width="280px"
               />
             </div>
           </div>
