@@ -1,10 +1,24 @@
 import { useState, useEffect } from 'react'
-import { HandCoins, User, DollarSign, Percent, Calendar, StickyNote, Plus, Trash2, CheckCircle2, Loader2, Info } from 'lucide-react'
+import { HandCoins, User, DollarSign, Percent, Calendar, StickyNote, Plus, Trash2, CheckCircle2, Loader2, Info } from 'lucide-center'
+import { HandCoins as HandCoinsIcon, User as UserIcon, DollarSign as DollarSignIcon, Percent as PercentIcon, Calendar as CalendarIcon, StickyNote as StickyNoteIcon, Plus as PlusIcon, Trash2 as Trash2Icon, CheckCircle2 as CheckCircle2Icon, Loader2 as Loader2Icon, Info as InfoIcon } from 'lucide-react'
 import { useLoansStore } from '../store/loansStore'
 import { formatCurrency } from '../utils/format'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import ConfirmModal from '../components/ui/ConfirmModal'
+
+// Re-mapping icons to avoid confusion with the imports
+const HandCoins = HandCoinsIcon;
+const User = UserIcon;
+const DollarSign = DollarSignIcon;
+const Percent = PercentIcon;
+const Calendar = CalendarIcon;
+const StickyNote = StickyNoteIcon;
+const Plus = PlusIcon;
+const Trash2 = Trash2Icon;
+const CheckCircle2 = CheckCircle2Icon;
+const Loader2 = Loader2Icon;
+const Info = InfoIcon;
 
 export default function Loans() {
   const { loans, stats, isLoading, fetchLoans, fetchStats, createLoan, deleteLoan } = useLoansStore()
@@ -94,7 +108,7 @@ export default function Loans() {
   const totalToReturn = principal + interestGenerated
 
   return (
-    <div className="space-y-6 md:space-y-8 pb-10">
+    <div className="space-y-8 pb-10">
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-brand-500/10 border border-brand-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)] text-brand-400 px-6 py-3 rounded-full flex items-center gap-2 animate-fade-in backdrop-blur-md">
@@ -106,51 +120,59 @@ export default function Loans() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <HandCoins className="text-brand-400 w-6 h-6" /> Préstamos
+          <h2 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
+            <HandCoins className="text-brand-400 w-7 h-7" /> Préstamos
           </h2>
-          <p className="text-slate-400 text-xs md:text-sm mt-1">Gestiona deudas e intereses de forma simple</p>
+          <p className="text-slate-400 text-sm mt-1">Gestiona deudas e intereses de forma simple</p>
         </div>
       </div>
 
-      {/* Stats Section - Optimización Móvil (3 columnas) */}
-      <div className="grid grid-cols-3 gap-2 md:gap-4">
-        <div className="bg-surface-800/50 backdrop-blur-sm border border-white/5 rounded-2xl p-3 md:p-5 flex flex-col justify-between min-h-[85px] md:min-h-0">
-          <p className="text-[9px] md:text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Activos</p>
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl md:text-2xl font-black text-white">{stats?.total_loans || 0}</h3>
-            <HandCoins className="w-4 h-4 text-blue-400 hidden md:block" />
+      {/* Stats Section - Revertido a columna por solicitud del usuario */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-surface-800/60 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex items-center justify-between group hover:border-brand-500/20 transition-all">
+          <div>
+            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Préstamos Activos</p>
+            <h3 className="text-3xl font-black text-white leading-tight">{stats?.total_loans || 0}</h3>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+            <HandCoins className="w-6 h-6" />
           </div>
         </div>
-        <div className="bg-surface-800/50 backdrop-blur-sm border border-white/5 rounded-2xl p-3 md:p-5 flex flex-col justify-between min-h-[85px] md:min-h-0">
-          <p className="text-[9px] md:text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Capital</p>
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm md:text-2xl font-black text-white truncate">{formatCurrency(stats?.total_principal || 0).split(',')[0]}</h3>
-            <DollarSign className="w-4 h-4 text-brand-400 hidden md:block" />
+        
+        <div className="bg-surface-800/60 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex items-center justify-between group hover:border-brand-500/20 transition-all">
+          <div>
+            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Capital Prestado</p>
+            <h3 className="text-2xl font-black text-white leading-tight">{formatCurrency(stats?.total_principal || 0)}</h3>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 group-hover:scale-110 transition-transform">
+            <DollarSign className="w-6 h-6" />
           </div>
         </div>
-        <div className="bg-surface-800/50 backdrop-blur-sm border border-brand-500/10 rounded-2xl p-3 md:p-5 flex flex-col justify-between min-h-[85px] md:min-h-0 shadow-glow-green/5">
-          <p className="text-[9px] md:text-xs text-brand-500/70 font-bold uppercase tracking-wider mb-1">Recuperar</p>
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm md:text-2xl font-black text-brand-400 truncate">{formatCurrency(stats?.total_to_recover || 0).split(',')[0]}</h3>
-            <CheckCircle2 className="w-4 h-4 text-brand-400 hidden md:block" />
+
+        <div className="bg-surface-800/60 backdrop-blur-md border border-brand-500/10 rounded-2xl p-5 flex items-center justify-between group hover:border-brand-500/30 transition-all shadow-glow-green/5">
+          <div>
+            <p className="text-xs text-brand-500/70 font-bold uppercase tracking-wider mb-1">Total a Recuperar</p>
+            <h3 className="text-2xl font-black text-brand-400 leading-tight">{formatCurrency(stats?.total_to_recover || 0)}</h3>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center text-brand-400 shadow-glow-green/10 group-hover:scale-110 transition-transform">
+            <CheckCircle2 className="w-6 h-6" />
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Form Section */}
         <div className="lg:col-span-5 space-y-6">
           <div className="card p-6 border-brand-500/10 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-full -mr-16 -mt-16 blur-3xl transition-all group-hover:bg-brand-500/10" />
             
             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-brand-400" /> Nuevo Préstamo
+              <Plus className="w-5 h-5 text-brand-400" /> Registrar Nuevo Préstamo
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Nombre de la persona</label>
+                <label className="text-xs font-bold text-slate-500 uppercase ml-1">Nombre de la persona</label>
                 <div className="relative group">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
                     <User className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
@@ -169,7 +191,7 @@ export default function Loans() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Monto (COP)</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">Monto (COP)</label>
                   <div className="relative group">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
                       <DollarSign className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
@@ -186,7 +208,7 @@ export default function Loans() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">% Interés</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">% Interés</label>
                   <div className="relative group">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
                       <Percent className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
@@ -204,7 +226,7 @@ export default function Loans() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Fecha del préstamo</label>
+                <label className="text-xs font-bold text-slate-500 uppercase ml-1">Fecha del préstamo</label>
                 <div className="relative group">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
                     <Calendar className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
@@ -220,7 +242,7 @@ export default function Loans() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Nota (Opcional)</label>
+                <label className="text-xs font-bold text-slate-500 uppercase ml-1">Nota (Opcional)</label>
                 <div className="relative group">
                   <div className="absolute left-3 top-3 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
                     <StickyNote className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
@@ -247,7 +269,7 @@ export default function Loans() {
                     <span className="text-brand-400 font-medium">+{formatCurrency(interestGenerated)}</span>
                   </div>
                   <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-slate-100 uppercase">Total a devolver:</span>
+                    <span className="text-xs font-bold text-slate-100 uppercase">Total a devolver:</span>
                     <span className="text-lg font-black text-brand-400">{formatCurrency(totalToReturn)}</span>
                   </div>
                 </div>
@@ -256,7 +278,7 @@ export default function Loans() {
               <button 
                 type="submit" 
                 disabled={isSubmitting || !formData.personName || !formData.amount}
-                className="btn-primary w-full py-3.5 mt-2 flex items-center justify-center gap-2"
+                className="btn-primary w-full py-4 mt-2 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
                 Guardar Préstamo
@@ -271,7 +293,7 @@ export default function Loans() {
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <HandCoins className="w-5 h-5 text-blue-400" /> Deudas Activas
             </h3>
-            <span className="text-xs text-slate-500 font-medium">{loans.length} registrados</span>
+            <span className="text-xs text-slate-500 font-medium">{loans.length} registros</span>
           </div>
 
           {isLoading && loans.length === 0 ? (
@@ -301,11 +323,11 @@ export default function Loans() {
                           <h4 className="font-bold text-slate-100 text-lg">{loan.person_name}</h4>
                           {parseFloat(loan.interest_rate as any) > 0 ? (
                             <span className="px-2 py-0.5 bg-brand-500/10 text-brand-400 text-[10px] font-black uppercase rounded-full border border-brand-500/20">
-                              {loan.interest_rate}% Int.
+                              {loan.interest_rate}% Interés
                             </span>
                           ) : (
                             <span className="px-2 py-0.5 bg-slate-500/10 text-slate-500 text-[10px] font-black uppercase rounded-full border border-white/5">
-                              0%
+                              Sin interés
                             </span>
                           )}
                         </div>
@@ -329,15 +351,15 @@ export default function Loans() {
                     <div className="grid grid-cols-3 gap-2 mt-6">
                       <div className="bg-white/5 rounded-xl p-3 border border-white/5">
                         <p className="text-[9px] text-slate-500 font-bold uppercase mb-1">Capital</p>
-                        <p className="text-sm font-bold text-slate-200">{formatCurrency(loan.amount).split(',')[0]}</p>
+                        <p className="text-sm font-bold text-slate-200">{formatCurrency(loan.amount)}</p>
                       </div>
                       <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                        <p className="text-[9px] text-slate-500 font-bold uppercase mb-1">Int.</p>
-                        <p className="text-sm font-bold text-brand-400">+{formatCurrency(interests).split(',')[0]}</p>
+                        <p className="text-[9px] text-slate-500 font-bold uppercase mb-1">Intereses</p>
+                        <p className="text-sm font-bold text-brand-400">+{formatCurrency(interests)}</p>
                       </div>
                       <div className="bg-brand-500/5 rounded-xl p-3 border border-brand-500/10">
                         <p className="text-[9px] text-brand-400 font-bold uppercase mb-1">Total</p>
-                        <p className="text-sm font-black text-white">{formatCurrency(total).split(',')[0]}</p>
+                        <p className="text-sm font-black text-white">{formatCurrency(total)}</p>
                       </div>
                     </div>
 
