@@ -53,12 +53,10 @@ function App() {
         }
       } catch (err) {
         console.error('Initial auth check failed:', err)
-        if (!useAuthStore.getState().isAuthenticated) {
-          logout()
-        }
+        // Force logout if check fails to clear stale tokens
+        logout()
       } finally {
-        // Asegurar que la pantalla profesional sea visible por el tiempo deseado
-        setTimeout(() => setInitializing(false), 5000)
+        setInitializing(false)
       }
     }
 
