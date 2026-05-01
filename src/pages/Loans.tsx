@@ -157,15 +157,17 @@ export default function Loans() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase ml-1">Nombre de la persona</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
+                    <User className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
+                  </div>
                   <input
                     type="text"
                     name="personName"
                     value={formData.personName}
                     onChange={handleInputChange}
                     placeholder="¿A quién le prestaste?"
-                    className="input-field pl-10"
+                    className="input pl-14 h-12 bg-surface-900/50 border-white/5 hover:border-white/10"
                     required
                   />
                 </div>
@@ -174,30 +176,34 @@ export default function Loans() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-500 uppercase ml-1">Monto (COP)</label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <div className="relative group">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
+                      <DollarSign className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
+                    </div>
                     <input
                       type="number"
                       name="amount"
                       value={formData.amount}
                       onChange={handleInputChange}
-                      placeholder="0.00"
-                      className="input-field pl-10"
+                      placeholder="0"
+                      className="input pl-14 h-12 bg-surface-900/50 border-white/5 hover:border-white/10"
                       required
                     />
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-500 uppercase ml-1">% Interés</label>
-                  <div className="relative">
-                    <Percent className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <div className="relative group">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
+                      <Percent className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
+                    </div>
                     <input
                       type="number"
                       name="interestRate"
                       value={formData.interestRate}
                       onChange={handleInputChange}
                       placeholder="0"
-                      className="input-field pl-10"
+                      className="input pl-14 h-12 bg-surface-900/50 border-white/5 hover:border-white/10"
                     />
                   </div>
                 </div>
@@ -205,28 +211,32 @@ export default function Loans() {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase ml-1">Fecha del préstamo</label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <div className="relative group">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
+                    <Calendar className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
+                  </div>
                   <input
                     type="date"
                     name="loanDate"
                     value={formData.loanDate}
                     onChange={handleInputChange}
-                    className="input-field pl-10"
+                    className="input pl-14 h-12 bg-surface-900/50 border-white/5 hover:border-white/10 appearance-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-500 uppercase ml-1">Nota (Opcional)</label>
-                <div className="relative">
-                  <StickyNote className="absolute left-3 top-3 w-4 h-4 text-slate-500" />
+                <div className="relative group">
+                  <div className="absolute left-3 top-3 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 group-focus-within:border-brand-500/30 group-focus-within:bg-brand-500/5 transition-all">
+                    <StickyNote className="w-4 h-4 text-slate-400 group-focus-within:text-brand-400" />
+                  </div>
                   <textarea
                     name="note"
                     value={formData.note}
                     onChange={handleInputChange}
                     placeholder="Algún detalle adicional..."
-                    className="input-field pl-10 pt-2 min-h-[80px]"
+                    className="input pl-14 pt-3 bg-surface-900/50 border-white/5 hover:border-white/10 min-h-[100px] resize-none"
                   />
                 </div>
               </div>
