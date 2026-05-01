@@ -32,7 +32,7 @@ export default function Login() {
     setLoading(true)
     setError('')
     try {
-      const { data } = await api.post('/auth/google', { token: credential })
+      const { data } = await api.post('/auth/google', { token })
       if (data.success) {
         setAuth(data.data.user, data.data.accessToken, data.data.refreshToken)
         navigate('/dashboard')
