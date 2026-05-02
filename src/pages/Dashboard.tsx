@@ -120,7 +120,10 @@ export default function Dashboard() {
       id: 'savings-card',
       label: showProjected ? 'Ahorro Mes (Supuesto)' : 'Ahorro del mes',
       info: 'Dinero que has movido de tu bolsillo a tus metas de ahorro este mes.',
-      value: formatCurrency(showProjected ? summary?.projected_savings ?? 0 : summary?.monthly_savings ?? 0),
+      value: formatCurrency(showProjected ? summary?.projected_savings ?? 0 : (Number(summary?.monthly_savings ?? 0) - Number(summary?.monthly_loans_from_goals ?? 0))),
+      loanIndicator: !showProjected && Number(summary?.monthly_loans_from_goals ?? 0) > 0 
+        ? `(prestastes +${formatCurrency(summary?.monthly_loans_from_goals ?? 0)})` 
+        : null,
       icon: Target,
       color: 'text-brand-400',
       bg: 'bg-brand-500/10',
@@ -183,7 +186,7 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
-        {statCards.map(({ id, label, info, value, realValue, icon: Icon, color, bg, border, style, isProjected, className }: any) => (
+        {statCards.map(({ id, label, info, value, realValue, loanIndicator, icon: Icon, color, bg, border, style, isProjected, className }: any) => (
           <div key={id} id={id} className={`card p-4 sm:p-5 border ${border} ${className || ''} space-y-2 sm:space-y-3 relative group`}>
             {isProjected && (
               <div className="absolute top-0 right-0 px-2 py-0.5 bg-yellow-500 text-slate-900 text-[8px] font-black uppercase tracking-tighter rounded-bl-lg z-10">
@@ -207,7 +210,14 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="space-y-1">
-              <p className={`text-lg sm:text-xl font-bold ${color} break-words`} style={style}>{value}</p>
+              <div className="flex flex-wrap items-baseline gap-2">
+                <p className={`text-lg sm:text-xl font-bold ${color} break-words`} style={style}>{value}</p>
+                {loanIndicator && (
+                  <span className="text-[10px] text-brand-500 font-black animate-pulse whitespace-nowrap">
+                    {loanIndicator}
+                  </span>
+                )}
+              </div>
               {realValue && (
                 <p className="text-[10px] text-slate-500 font-medium">
                   Real: <span className="text-slate-400">{realValue}</span>

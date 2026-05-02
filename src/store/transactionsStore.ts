@@ -30,6 +30,7 @@ export interface Summary {
   monthly_income: number
   monthly_expenses: number
   monthly_savings: number
+  monthly_loans_from_goals: number
   projected_income: number
   projected_expenses: number
   projected_savings: number
